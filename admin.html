@@ -1,1 +1,24 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>众和图库管理后台</title><link rel="stylesheet" href="styles.css"></head><body class="admin-body"><header class="admin-top"><div class="brand"><img src="logo.jpg" alt="众和"><div><strong>众和品牌图库管理后台</strong><div class="small" style="color:#b8cadb">图片 / 视频 / 标题 / 发布 / 排序</div></div></div><div class="top-actions" id="topActions" style="display:none"><span id="userLabel" class="small" style="color:#d5e2ee"></span><button class="secondary" id="logoutBtn">退出登录</button></div></header><main class="admin-main"><section class="login" id="loginBox"><h1>管理员登录</h1><p class="small">使用你在 Supabase Authentication 中创建的管理员邮箱和密码登录。</p><div class="field"><label>管理员邮箱</label><input id="email" type="email" autocomplete="username" placeholder="管理员邮箱"></div><div class="field"><label>密码</label><input id="password" type="password" autocomplete="current-password" placeholder="密码"></div><button class="primary" id="loginBtn">登录管理后台</button><div class="status" id="loginStatus"></div></section><section class="dashboard" id="dashboard"><div class="notice">这里的修改会直接写入 Supabase。访客无需登录即可查看已发布内容；你可以逐个内容位上传、替换、删除和排序。</div><div class="admin-grid" id="adminGrid"></div></section></main><div class="toast" id="toast"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="admin.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>众和图库管理后台</title><link rel="stylesheet" href="styles.css"></head>
+<body class="admin-body">
+<header class="admin-top"><div class="brand"><img src="logo.png" alt="众和"><div><strong>众和品牌图库管理后台</strong><div class="small">图片 / 视频 / 分类相册 / 顶部背景</div></div></div>
+<div class="top-actions" id="topActions"><span id="userLabel" class="small"></span><button class="secondary" id="logoutBtn">退出登录</button></div></header>
+<main class="admin-main">
+<section class="login" id="loginBox"><h1>管理员登录</h1><p class="small">使用 Supabase Authentication 中的管理员邮箱和密码登录。</p>
+<div class="field"><label>管理员邮箱</label><input id="email" type="email" autocomplete="username" placeholder="管理员邮箱"></div>
+<div class="field"><label>密码</label><input id="password" type="password" autocomplete="current-password" placeholder="密码"></div>
+<button class="primary" id="loginBtn">登录管理后台</button><div class="status" id="loginStatus"></div></section>
+
+<section class="dashboard" id="dashboard">
+<div class="notice"><b>V2 图库管理：</b>一个分类现在可以上传多张图片/多个视频。上传后会自动进入对应相册；访客点击分类封面进入相册，再点击图片在网页内放大预览。</div>
+<section class="hero-admin">
+<h2>首页顶部背景</h2><p class="small">建议使用横向、暗色、干净的 VFFS 包装机/无尘车间图片。这里上传后会直接作为“品牌形象图库”顶部背景。</p>
+<div id="heroBox" class="hero-setting"></div>
+</section>
+<div id="adminGrid" class="admin-grid"></div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="admin.js"></script>
+</body></html>
