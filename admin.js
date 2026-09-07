@@ -3,16 +3,73 @@ const client=createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
 const bucket=window.SUPABASE_BUCKET;
 const defs=[['company','公司形象','Company','▦'],['factory','厂房环境','Factory','▤'],['workshop','生产车间','Workshop','⚙'],['vffs','VFFS设备','VFFS Machine','▥'],['food','食品包装','Food Packaging','◈'],['weighing','自动称重','Weighing System','⌗'],['cases','项目案例','Case Studies','▣'],['videos','视频中心','Video','▶']];
 let items=[],hero=null;
+const SITE_DEFAULTS = {
+  nav_home:'首页', nav_about:'公司概况', nav_gallery:'品牌图库', nav_solution:'解决方案', nav_contact:'联系我们',
+  hero_eyebrow:'SHANGHAI ZHONGHE PACKAGING MACHINERY', hero_title:'品牌形象图库', hero_subtitle:'用影像，记录我们的专业与实力', hero_en:'BRAND GALLERY', hero_desc:'Photos & Videos　|　Our Factory · Our Machines · Our Team',
+  about_title:'公司概况', about_en:'ABOUT US', about_text:'上海众和包装机械有限公司是一家专注于 VFFS 立式包装机及食品包装解决方案的高新技术企业。公司拥有专业的研发团队和先进的制造工艺，致力于为客户提供高效、稳定、智能的包装设备。', about_features:[['高品质设备','精工制造 品质可靠','◇'],['定制化方案','满足多样化需求','⚙'],['全球服务','快速响应 专业支持','◎'],['合作共赢','与客户共同成长','♢']],
+  gallery_title:'精选图库', gallery_en:'FEATURED GALLERY',
+  video_title:'VFFS 包装系统方案演示视频', video_desc:'从薄膜放卷、制袋、计量到成品输出，展示高效、稳定、智能的包装解决方案。', video_button:'浏览视频内容　▶',
+  contact_company_title:'上海众和包装机械有限公司', contact_company_text:'专注包装机械及自动化包装系统，为食品及相关行业提供设备与整体解决方案。',
+  contact_title:'联系我们', contact_address:'地址：上海市松江区玉佳支路88号', contact_phone:'电话：021-57817120-106', contact_mobile:'手机：13301975098',
+  contact_gallery_title:'品牌图库', contact_gallery_text:'厂房环境 · 生产车间 · VFFS设备 · 食品包装\n自动称重 · 项目案例 · 视频中心', footer:'© 上海众和包装机械有限公司',
+  categories:[['company','公司形象','Company','▦'],['factory','厂房环境','Factory','▤'],['workshop','生产车间','Workshop','⚙'],['vffs','VFFS设备','VFFS Machine','▥'],['food','食品包装','Food Packaging','◈'],['weighing','自动称重','Weighing System','⌗'],['cases','项目案例','Case Studies','▣'],['videos','视频中心','Video','▶']]
+};
+let siteSettings = structuredClone(SITE_DEFAULTS);
+let siteSettingsRow = null;
+
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 function ext(file){const p=file.name.split('.');return p.length>1?p.pop().toLowerCase():'bin'}
 function pathFromUrl(url){const marker=`/storage/v1/object/public/${bucket}/`;const i=(url||'').indexOf(marker);return i>=0?url.slice(i+marker.length):null}
 function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>x.slot_key!=='hero').forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
+
+function settingsFields(){
+ const fields=[
+  ['nav_home','导航：首页','input'],['nav_about','导航：公司概况','input'],['nav_gallery','导航：品牌图库','input'],['nav_solution','导航：解决方案（跳转视频）','input'],['nav_contact','导航：联系我们','input'],
+  ['hero_eyebrow','首页 Banner 英文眉题','input'],['hero_title','首页 Banner 标题','input'],['hero_subtitle','首页 Banner 副标题','input'],['hero_en','首页 Banner 英文小标题','input'],['hero_desc','首页 Banner 说明','input'],
+  ['about_title','公司概况标题','input'],['about_en','公司概况英文','input'],['about_text','公司概况正文','textarea'],
+  ['gallery_title','图库标题','input'],['gallery_en','图库英文','input'],
+  ['video_title','视频区标题','input'],['video_desc','视频区说明','textarea'],['video_button','视频按钮','input'],
+  ['contact_company_title','联系我们左侧公司名','input'],['contact_company_text','联系我们左侧说明','textarea'],['contact_title','联系我们标题','input'],['contact_address','地址','input'],['contact_phone','电话','input'],['contact_mobile','手机','input'],['contact_gallery_title','联系我们右侧标题','input'],['contact_gallery_text','图库分类说明','textarea'],['footer','页脚文字','input']
+ ];
+ const html=fields.map(([k,label,type])=>`<div class="field"><label>${label}</label>${type==='textarea'?`<textarea id="site-${k}" rows="3">${esc(siteSettings[k]||'')}</textarea>`:`<input id="site-${k}" value="${esc(siteSettings[k]||'')}">`}</div>`).join('');
+ const feats=siteSettings.about_features||SITE_DEFAULTS.about_features;
+ const featHtml=feats.map((f,i)=>`<div class="field"><label>优势 ${i+1} 名称</label><input id="feat-${i}" value="${esc(f[0])}"></div><div class="field"><label>优势 ${i+1} 说明</label><input id="featt-${i}" value="${esc(f[1])}"></div>`).join('');
+ const cats=siteSettings.categories||SITE_DEFAULTS.categories;
+ const catHtml=cats.map((c,i)=>`<div class="field"><label>分类 ${i+1} 中文名称</label><input id="cat-${i}" value="${esc(c[1])}"></div><div class="field"><label>分类 ${i+1} 英文名称</label><input id="cate-${i}" value="${esc(c[2])}"></div>`).join('');
+ $('siteSettingsForm').innerHTML=`<div class="settings-group"><h3>页面文字</h3><div class="settings-grid-inner">${html}</div></div><div class="settings-group"><h3>公司概况右侧四项优势</h3><div class="settings-grid-inner">${featHtml}</div></div><div class="settings-group"><h3>8 个图库分类名称</h3><div class="settings-grid-inner">${catHtml}</div></div>`;
+}
+async function loadSiteSettings(){
+ const {data,error}=await client.from('gallery_items').select('*').eq('slot_key','site_settings').order('created_at',{ascending:true}).limit(1);
+ if(error){$('siteSettingsStatus').textContent='读取网站文字失败：'+error.message;return}
+ siteSettingsRow=data?.[0]||null;
+ if(siteSettingsRow?.description){try{siteSettings={...SITE_DEFAULTS,...JSON.parse(siteSettingsRow.description)}}catch(e){}}
+ settingsFields();
+}
+async function saveSiteSettings(){
+ const payload={...siteSettings};
+ const fields=['nav_home','nav_about','nav_gallery','nav_solution','nav_contact','hero_eyebrow','hero_title','hero_subtitle','hero_en','hero_desc','about_title','about_en','about_text','gallery_title','gallery_en','video_title','video_desc','video_button','contact_company_title','contact_company_text','contact_title','contact_address','contact_phone','contact_mobile','contact_gallery_title','contact_gallery_text','footer'];
+ fields.forEach(k=>{const e=$('site-'+k);if(e)payload[k]=e.value.trim()});
+ payload.about_features=(siteSettings.about_features||SITE_DEFAULTS.about_features).map((f,i)=>[($('feat-'+i).value.trim()||f[0]),($('featt-'+i).value.trim()||f[1]),f[2]]);
+ payload.categories=(siteSettings.categories||SITE_DEFAULTS.categories).map((c,i)=>[c[0],$('cat-'+i).value.trim()||c[1],$('cate-'+i).value.trim()||c[2],c[3]]);
+ const rowPayload={slot_key:'site_settings',title:'网站文字设置',description:JSON.stringify(payload),image_url:'',video_url:'',sort_order:-999,published:true};
+ let r;
+ if(siteSettingsRow) r=await client.from('gallery_items').update(rowPayload).eq('id',siteSettingsRow.id);
+ else r=await client.from('gallery_items').insert(rowPayload);
+ if(r.error){$('siteSettingsStatus').textContent='保存失败：'+r.error.message;return}
+ siteSettings=payload;
+ $('siteSettingsStatus').textContent='网站文字已保存';
+ await loadAll();
+}
+window.loadSiteSettings=loadSiteSettings;
+window.saveSiteSettings=saveSiteSettings;
+
 async function loadAll(){
  const {data,error}=await client.from('gallery_items').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
  if(error)throw error;items=data||[];hero=items.find(x=>x.slot_key==='hero')||null;
- renderHero();render();
+ const row=items.find(x=>x.slot_key==='site_settings'); if(row?.description){try{siteSettings={...SITE_DEFAULTS,...JSON.parse(row.description)}}catch(e){}};
+ renderHero();render(); settingsFields();
 }
 function renderHero(){
  const box=$('heroBox');
@@ -134,7 +191,8 @@ async function deleteHero(){
 }
 window.deleteHero=deleteHero;
 function showLogin(){$('loginBox').style.display='block';$('dashboard').style.display='none'}
-async function showDashboard(session){$('loginBox').style.display='none';$('dashboard').style.display='block';$('userLabel').textContent=session.user.email;try{await loadAll()}catch(e){$('adminGrid').innerHTML=`<div class="notice">读取后台失败：${esc(e.message)}</div>`}}
+async function showDashboard(session){$('loginBox').style.display='none';$('dashboard').style.display='block';$('userLabel').textContent=session.user.email;try{await loadAll();await loadSiteSettings()}catch(e){$('adminGrid').innerHTML=`<div class="notice">读取后台失败：${esc(e.message)}</div>`}}
 $('loginBtn').onclick=async()=>{const email=$('email').value.trim(),password=$('password').value;$('loginStatus').textContent='登录中…';const {error}=await client.auth.signInWithPassword({email,password});$('loginStatus').textContent=error?'登录失败：'+error.message:''};
 $('logoutBtn').onclick=()=>client.auth.signOut();
+$('saveSiteSettingsBtn').onclick=saveSiteSettings;
 (async()=>{const {data:{session}}=await client.auth.getSession();if(session)showDashboard(session);else showLogin();client.auth.onAuthStateChange((_e,s)=>s?showDashboard(s):showLogin())})();

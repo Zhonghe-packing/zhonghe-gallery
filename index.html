@@ -1,26 +1,43 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+<!-- zhonghe-v5: unified section alignment; navigation underline removed -->
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>上海众和包装机械有限公司｜品牌形象图库</title>
-<meta name="description" content="上海众和包装机械有限公司品牌形象图库｜厂房、车间、VFFS设备、食品包装、自动称重与项目案例">
+<meta name="description" content="上海众和包装机械有限公司品牌形象图库">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="top"><div class="nav">
   <a class="logo" href="index.html"><img src="logo.png" alt="上海众和包装机械有限公司 Logo"><div><strong>上海众和包装机械有限公司</strong><small>SHANGHAI ZHONGHE PACKAGING MACHINERY CO., LTD.</small></div></a>
-  <nav class="menu"><a href="#">首页</a><a href="#">公司概况</a><a href="#">产品中心</a><a href="#">解决方案</a><a class="active" href="#gallery">品牌图库</a><a href="#">新闻中心</a><a href="#contact">联系我们</a></nav>
+  <nav class="menu">
+    <a id="navHome" href="index.html">首页</a>
+    <a id="navAbout" href="#about">公司概况</a>
+    <a id="navGallery" class="active" href="#gallery">品牌图库</a>
+    <a id="navSolution" href="#video">解决方案</a>
+    <a id="navContact" href="#contact">联系我们</a>
+  </nav>
   <div class="lang">中文 | EN</div>
 </div></header>
 
 <section class="hero" id="hero">
   <div class="hero-photo"></div><div class="hero-shade"></div><div class="gridline"></div>
   <div class="hero-content">
-    <div class="eyebrow">SHANGHAI ZHONGHE PACKAGING MACHINERY</div>
-    <h1>品牌形象图库</h1>
-    <p class="subtitle">用影像，记录我们的专业与实力</p>
-    <div class="hero-line"></div><div class="hero-en">BRAND GALLERY</div>
-    <div class="hero-desc">Photos & Videos　|　Our Factory · Our Machines · Our Team</div>
+    <div class="eyebrow" id="heroEyebrow"></div>
+    <h1 id="heroTitle"></h1>
+    <p class="subtitle" id="heroSubtitle"></p>
+    <div class="hero-line"></div><div class="hero-en" id="heroEn"></div>
+    <div class="hero-desc" id="heroDesc"></div>
+  </div>
+</section>
+
+<section id="about" class="about-text-section">
+  <div class="about-inner">
+    <div class="about-copy">
+      <div class="section-heading"><h2 id="aboutTitle">公司概况</h2><span id="aboutEn">ABOUT US</span></div>
+      <p id="aboutText"></p>
+    </div>
+    <div class="about-features" id="aboutFeatures"></div>
   </div>
 </section>
 
@@ -28,23 +45,25 @@
 
 <main id="gallery" class="section">
   <div class="section-title">
-    <div><h2>精选图库 <em>FEATURED GALLERY</em></h2><p id="albumTitle" class="album-title">公司形象</p></div>
+    <div><h2><span id="galleryTitle">精选图库</span> <em id="galleryEn">FEATURED GALLERY</em></h2><p id="albumTitle" class="album-title">品牌图库</p></div>
     <span class="hint" id="syncStatus">正在连接图库…</span>
   </div>
   <div class="gallery" id="galleryGrid"><div class="loading">正在加载图库…</div></div>
 
-  <div class="video-banner">
-    <div class="video-copy"><h3>VFFS 包装系统演示视频</h3><p>从薄膜放卷、制袋、计量到成品输出，展示高效、稳定、智能的包装解决方案。</p><button class="video-btn" id="videoCenterBtn">浏览视频内容　▶</button></div>
+  <div class="video-banner" id="video">
+    <div class="video-copy"><h3 id="videoTitle">VFFS 包装系统方案演示视频</h3><p id="videoDesc"></p><button class="video-btn" id="videoCenterBtn">浏览视频内容　▶</button></div>
     <div class="play">▶</div>
   </div>
 </main>
 
 <section id="contact" class="contact"><div class="contact-grid">
-  <div><h3>上海众和包装机械有限公司</h3><p>专注包装机械及自动化包装系统，为食品及相关行业提供设备与整体解决方案。</p></div>
-  <div><h3>联系我们</h3><p>地址：上海市松江区玉佳支路88号</p><p>电话：021-57817120-106</p><p>手机：13301975098</p></div>
-  <div><h3>品牌图库</h3><p>厂房环境 · 生产车间 · VFFS设备 · 食品包装</p><p>自动称重 · 项目案例 · 视频中心</p></div>
+  <div><h3 id="contactCompanyTitle"></h3><p id="contactCompanyText"></p></div>
+  <div><h3 id="contactTitle"></h3><div class="contact-details">
+    <p id="contactAddress"></p><p id="contactPhone"></p><p id="contactMobile"></p>
+  </div></div>
+  <div><h3 id="contactGalleryTitle"></h3><p id="contactGalleryText"></p></div>
 </div></section>
-<footer><div class="foot"><span>© 上海众和包装机械有限公司</span><a class="admin-link" href="admin.html">管理后台</a></div></footer>
+<footer><div class="foot"><span id="footerText"></span><a class="admin-link" href="admin.html">管理后台</a></div></footer>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lb-close" id="lbClose">×</button><button class="lb-prev" id="lbPrev">‹</button>
@@ -57,25 +76,38 @@
 <script src="config.js"></script>
 <script>
 const {createClient}=supabase, client=createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
-const defs=[
- ['company','公司形象','Company','▦'],['factory','厂房环境','Factory','▤'],['workshop','生产车间','Workshop','⚙'],['vffs','VFFS设备','VFFS Machine','▥'],
- ['food','食品包装','Food Packaging','◈'],['weighing','自动称重','Weighing System','⌗'],['cases','项目案例','Case Studies','▣'],['videos','视频中心','Video','▶']
-];
+const DEFAULTS={"nav_home": "首页", "nav_about": "公司概况", "nav_gallery": "品牌图库", "nav_solution": "解决方案", "nav_contact": "联系我们", "hero_eyebrow": "SHANGHAI ZHONGHE PACKAGING MACHINERY", "hero_title": "品牌形象图库", "hero_subtitle": "用影像，记录我们的专业与实力", "hero_en": "BRAND GALLERY", "hero_desc": "Photos & Videos　|　Our Factory · Our Machines · Our Team", "about_title": "公司概况", "about_en": "ABOUT US", "about_text": "上海众和包装机械有限公司是一家专注于 VFFS 立式包装机及食品包装解决方案的高新技术企业。公司拥有专业的研发团队和先进的制造工艺，致力于为客户提供高效、稳定、智能的包装设备。", "about_features": [["高品质设备","精工制造 品质可靠","◇"],["定制化方案","满足多样化需求","⚙"],["全球服务","快速响应 专业支持","◎"],["合作共赢","与客户共同成长","♢"]], "gallery_title": "精选图库", "gallery_en": "FEATURED GALLERY", "video_title": "VFFS 包装系统方案演示视频", "video_desc": "从薄膜放卷、制袋、计量到成品输出，展示高效、稳定、智能的包装解决方案。", "video_button": "浏览视频内容　▶", "contact_company_title": "上海众和包装机械有限公司", "contact_company_text": "专注包装机械及自动化包装系统，为食品及相关行业提供设备与整体解决方案。", "contact_title": "联系我们", "contact_address": "地址：上海市松江区玉佳支路88号", "contact_phone": "电话：021-57817120-106", "contact_mobile": "手机：13301975098", "contact_gallery_title": "品牌图库", "contact_gallery_text": "厂房环境 · 生产车间 · VFFS设备 · 食品包装\n自动称重 · 项目案例 · 视频中心", "footer": "© 上海众和包装机械有限公司", "categories": [["company", "公司形象", "Company", "▦"], ["factory", "厂房环境", "Factory", "▤"], ["workshop", "生产车间", "Workshop", "⚙"], ["vffs", "VFFS设备", "VFFS Machine", "▥"], ["food", "食品包装", "Food Packaging", "◈"], ["weighing", "自动称重", "Weighing System", "⌗"], ["cases", "项目案例", "Case Studies", "▣"], ["videos", "视频中心", "Video", "▶"]]};
+let settings=structuredClone(DEFAULTS);
+let defs=DEFAULTS.categories.slice();
 let all=[], currentSlot='company', album=[], currentIndex=0;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function text(id,key){const e=$(id);if(e)e.textContent=settings[key]??DEFAULTS[key]??''}
+function renderAboutFeatures(){
+  const box=$('aboutFeatures'); if(!box) return;
+  const items=settings.about_features||DEFAULTS.about_features||[];
+  box.innerHTML=items.map(x=>`<div class="feature"><div class="feature-icon">${esc(x[2]||'◇')}</div><b>${esc(x[0]||'')}</b><span>${esc(x[1]||'')}</span></div>`).join('');
+}
+function applySettings(){
+  text('navHome','nav_home'); text('navAbout','nav_about'); text('navGallery','nav_gallery'); text('navSolution','nav_solution'); text('navContact','nav_contact');
+  text('heroEyebrow','hero_eyebrow'); text('heroTitle','hero_title'); text('heroSubtitle','hero_subtitle'); text('heroEn','hero_en'); text('heroDesc','hero_desc');
+  text('aboutEn','about_en'); text('aboutTitle','about_title'); text('aboutText','about_text'); renderAboutFeatures();
+  text('galleryTitle','gallery_title'); text('galleryEn','gallery_en'); text('videoTitle','video_title'); text('videoDesc','video_desc'); text('videoButton','video_button');
+  text('contactCompanyTitle','contact_company_title'); text('contactCompanyText','contact_company_text'); text('contactTitle','contact_title'); text('contactAddress','contact_address'); text('contactPhone','contact_phone'); text('contactMobile','contact_mobile'); text('contactGalleryTitle','contact_gallery_title'); text('contactGalleryText','contact_gallery_text'); text('footerText','footer');
+  $('navHome').href='index.html'; $('navAbout').href='#about'; $('navGallery').href='#gallery'; $('navSolution').href='#video'; $('navContact').href='#contact';
+  defs=(settings.categories&&settings.categories.length?settings.categories:DEFAULTS.categories).map((d,i)=>[d[0],d[1],d[2],d[3]]);
+  makeTabs();
+}
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function makeTabs(){
- $('tabs').innerHTML=defs.map((d,i)=>`<button class="tab ${i===0?'active':''}" data-slot="${d[0]}"><span class="icon">${d[3]}</span><b>${d[1]}</b><span>${d[2]}</span></button>`).join('');
+ $('tabs').innerHTML=defs.map((d,i)=>`<button class="tab ${i===0?'active':''}" data-slot="${d[0]}"><span class="icon">${d[3]}</span><b>${esc(d[1])}</b><span>${esc(d[2])}</span></button>`).join('');
  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>selectSlot(t.dataset.slot,true));
 }
 function placeholder(slot){return `<div class="placeholder">${slot==='vffs'||slot==='videos'?'VFFS':'ZH'}</div>`}
 function coverCard(slot){
  const d=defs.find(x=>x[0]===slot), arr=all.filter(x=>x.slot_key===slot), item=arr[0];
- let media=item?.image_url?`<img src="${esc(item.image_url)}" alt="${esc(d[1])}" loading="lazy">`:item?.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="metadata"></video>`:placeholder(slot);
- return `<article class="card cover-card" data-slot="${slot}" onclick="selectSlot('${slot}',true)">
-   <div class="media">${media}<div class="label"><b>${d[1]}</b><span>${arr.length?arr.length+' 个内容':'暂无内容 · 后台可上传'}</span></div><div class="arrow">→</div></div>
- </article>`;
+ let media=item?.image_url?`<img src="${esc(item.image_url)}" alt="${esc(d?.[1]||slot)}" loading="lazy">`:item?.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="metadata"></video>`:placeholder(slot);
+ return `<article class="card cover-card" data-slot="${slot}" onclick="selectSlot('${slot}',true)"><div class="media">${media}<div class="label"><b>${esc(d?.[1]||slot)}</b><span>${arr.length?arr.length+' 个内容':'暂无内容 · 后台可上传'}</span></div><div class="arrow">→</div></div></article>`;
 }
 function itemCard(item,i){
  const d=defs.find(x=>x[0]===item.slot_key), title=item.title||d?.[1]||'图库';
@@ -85,46 +117,62 @@ function itemCard(item,i){
 function renderAlbum(){
  const d=defs.find(x=>x[0]===currentSlot); album=all.filter(x=>x.slot_key===currentSlot);
  $('albumTitle').textContent=d?.[1]||'图库';
- if(!album.length){
-   $('galleryGrid').innerHTML=coverCard(currentSlot);
-   return;
- }
- $('galleryGrid').innerHTML=album.map((x,i)=>itemCard(x,i)).join('');
+ $('galleryGrid').innerHTML=album.length?album.map((x,i)=>itemCard(x,i)).join(''):coverCard(currentSlot);
 }
 function renderFeatured(){
- $('galleryGrid').innerHTML=defs.map(d=>coverCard(d[0])).join('');
- $('albumTitle').textContent='全部分类';
+  // Gallery uses one simple category tab bar + the selected category's photo grid.
+  // Default to the first category so uploaded Company Image photos appear immediately.
+  currentSlot = currentSlot || defs[0]?.[0] || 'company';
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===currentSlot));
+  renderAlbum();
 }
-function selectSlot(slot,scroll){
- currentSlot=slot;
- document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===slot));
- renderAlbum();
- if(scroll)$('gallery').scrollIntoView({behavior:'smooth',block:'start'});
-}
+function selectSlot(slot,scroll){currentSlot=slot;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===slot));renderAlbum();if(scroll)$('gallery').scrollIntoView({behavior:'smooth',block:'start'})}
 async function load(){
- makeTabs();
  const {data,error}=await client.from('gallery_items').select('*').eq('published',true).order('sort_order',{ascending:true}).order('created_at',{ascending:true});
  if(error){$('syncStatus').textContent='图库连接失败';$('galleryGrid').innerHTML='<div class="empty">暂时无法读取图库，请检查 Supabase Data API 与 RLS 配置。</div>';return}
- all=(data||[]).filter(x=>x.slot_key!=='hero');
- const hero= (data||[]).find(x=>x.slot_key==='hero' && x.image_url);
+ all=(data||[]).filter(x=>!['hero','site_settings'].includes(x.slot_key));
+ const row=(data||[]).find(x=>x.slot_key==='site_settings');
+ if(row?.description){try{settings={...DEFAULTS,...JSON.parse(row.description)}}catch(e){}}
+ const hero=(data||[]).find(x=>x.slot_key==='hero'&&x.image_url);
  if(hero)$('hero').querySelector('.hero-photo').style.backgroundImage=`url("${hero.image_url}")`;
+ applySettings();
  $('syncStatus').textContent=`已连接 · ${all.length} 个内容`;
- renderAlbum();
+ renderFeatured();
 }
 window.selectSlot=selectSlot;
-function openLightbox(i){currentIndex=i;showLightboxItem()}
-function showLightboxItem(){
- const item=album[currentIndex]; if(!item)return;
- $('lbMedia').innerHTML=item.image_url?`<img src="${esc(item.image_url)}" alt="">`:item.video_url?`<video src="${esc(item.video_url)}" controls autoplay playsinline></video>`:'';
- $('lbCaption').textContent=(item.title||'')+(item.description?' · '+item.description:'');
- $('lightbox').classList.add('show');$('lightbox').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll');
+
+function setNavActive(id){
+  document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('active',a.id===id));
 }
+document.querySelectorAll('.menu a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const id=a.id;
+    setNavActive(id);
+  });
+});
+const navSections=[
+  ['navContact','contact'],
+  ['navSolution','video'],
+  ['navGallery','gallery'],
+  ['navAbout','about'],
+  ['navHome','hero']
+];
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(entries=>{
+    const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+    if(visible[0]){
+      const hit=navSections.find(x=>x[1]===visible[0].target.id);
+      if(hit) setNavActive(hit[0]);
+    }
+  },{rootMargin:'-20% 0px -60% 0px',threshold:[0,.15,.4,.7]});
+  navSections.forEach(x=>{const el=$(x[1]); if(el)io.observe(el)});
+}
+
+function openLightbox(i){currentIndex=i;showLightboxItem()}
+function showLightboxItem(){const item=album[currentIndex];if(!item)return;$('lbMedia').innerHTML=item.image_url?`<img src="${esc(item.image_url)}" alt="">`:item.video_url?`<video src="${esc(item.video_url)}" controls autoplay playsinline></video>`:'';$('lbCaption').textContent=(item.title||'')+(item.description?' · '+item.description:'');$('lightbox').classList.add('show');$('lightbox').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll')}
 function closeLightbox(){$('lightbox').classList.remove('show');$('lightbox').setAttribute('aria-hidden','true');$('lbMedia').innerHTML='';document.body.classList.remove('no-scroll')}
 function step(n){if(!album.length)return;currentIndex=(currentIndex+n+album.length)%album.length;showLightboxItem()}
-$('lbClose').onclick=closeLightbox;$('lbPrev').onclick=()=>step(-1);$('lbNext').onclick=()=>step(1);
-$('lightbox').onclick=e=>{if(e.target===$('lightbox'))closeLightbox()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
-$('videoCenterBtn').onclick=()=>selectSlot('videos',true);
+$('lbClose').onclick=closeLightbox;$('lbPrev').onclick=()=>step(-1);$('lbNext').onclick=()=>step(1);$('lightbox').onclick=e=>{if(e.target===$('lightbox'))closeLightbox()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});$('videoCenterBtn').onclick=()=>selectSlot('videos',true);
 load();
 </script>
 </body></html>

@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>众和图库管理后台</title><link rel="stylesheet" href="styles.css"></head>
 <body class="admin-body">
-<header class="admin-top"><div class="brand"><img src="logo.png" alt="众和"><div><strong>众和品牌图库管理后台</strong><div class="small">图片 / 视频 / 分类相册 / 顶部背景</div></div></div>
+<header class="admin-top"><div class="brand"><img src="logo.png" alt="众和"><div><strong>众和品牌图库管理后台</strong><div class="small">图片 / 视频 / 分类相册 / 顶部背景 / 网站文字</div></div></div>
 <div class="top-actions" id="topActions"><span id="userLabel" class="small"></span><button class="secondary" id="logoutBtn">退出登录</button></div></header>
 <main class="admin-main">
 <section class="login" id="loginBox"><h1>管理员登录</h1><p class="small">使用 Supabase Authentication 中的管理员邮箱和密码登录。</p>
@@ -11,7 +11,14 @@
 <button class="primary" id="loginBtn">登录管理后台</button><div class="status" id="loginStatus"></div></section>
 
 <section class="dashboard" id="dashboard">
-<div class="notice"><b>V2 图库管理：</b>一个分类现在可以上传多张图片/多个视频。上传后会自动进入对应相册；访客点击分类封面进入相册，再点击图片在网页内放大预览。</div>
+<div class="notice"><b>V4 图库管理：</b>一个分类现在可以上传多张图片/多个视频。上传后会自动进入对应相册；访客点击分类封面进入相册，再点击图片在网页内放大预览。</div>
+<section class="site-settings">
+<h2>网站文字内容</h2>
+<p class="small">首页、导航、公司概况、图库标题、视频区、联系我们及 8 个分类名称都可以直接在这里修改。保存后公开网站会自动使用新文字。</p>
+<div id="siteSettingsForm" class="settings-grid"></div>
+<button class="primary" id="saveSiteSettingsBtn">保存网站文字</button>
+<div class="status" id="siteSettingsStatus"></div>
+</section>
 <section class="hero-admin">
 <h2>首页顶部背景</h2><p class="small">建议使用横向、暗色、干净的 VFFS 包装机/无尘车间图片。这里上传后会直接作为“品牌形象图库”顶部背景。</p>
 <div id="heroBox" class="hero-setting"></div>
