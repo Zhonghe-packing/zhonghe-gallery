@@ -66,7 +66,7 @@
   </div></div>
   <div><h3 id="contactGalleryTitle"></h3><p id="contactGalleryText"></p></div>
 </div></section>
-<footer><div class="foot"><span id="footerText"></span><a class="admin-link" href="admin.html">管理后台</a></div></footer>
+<footer><div class="foot"><span id="footerText"></span><span class="footer-note">公司内部使用　转载商用违者必究</span><a class="admin-link" href="admin.html">管理后台</a></div></footer>
 </div>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
@@ -159,7 +159,7 @@ async function load(){
  all=(data||[]).filter(x=>!['hero','hero_desktop','hero_mobile','hero_left','hero_right','hero_center','site_settings'].includes(x.slot_key));
  const row=(data||[]).find(x=>x.slot_key==='site_settings');
  if(row?.description){try{settings={...DEFAULTS,...JSON.parse(row.description)}}catch(e){}}
- const heroDesktop=(data||[]).find(x=>(x.slot_key==='hero_desktop'||x.slot_key==='hero_center'||x.slot_key==='hero')&&x.image_url);
+ const heroDesktop=(data||[]).find(x=>x.slot_key==='hero_desktop'&&x.image_url);
  const heroMobile=(data||[]).find(x=>x.slot_key==='hero_mobile'&&x.image_url);
  const setImage=(id,item)=>{const e=$(id);if(!e)return;e.src=item?.image_url||'';e.style.display=item?.image_url?'block':'none'};
  setImage('heroDesktopImage',heroDesktop);

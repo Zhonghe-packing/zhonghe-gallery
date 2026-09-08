@@ -67,7 +67,7 @@ window.saveSiteSettings=saveSiteSettings;
 
 async function loadAll(){
  const {data,error}=await client.from('gallery_items').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;items=data||[];heroDesktop=items.find(x=>x.slot_key==='hero_desktop')||items.find(x=>x.slot_key==='hero_center')||items.find(x=>x.slot_key==='hero')||null;heroMobile=items.find(x=>x.slot_key==='hero_mobile')||null;
+ if(error)throw error;items=data||[];heroDesktop=items.find(x=>x.slot_key==='hero_desktop')||null;heroMobile=items.find(x=>x.slot_key==='hero_mobile')||null;
  const row=items.find(x=>x.slot_key==='site_settings'); if(row?.description){try{siteSettings={...SITE_DEFAULTS,...JSON.parse(row.description)}}catch(e){}};
  renderHero();render(); settingsFields();
 }
