@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="site-canvas" id="siteCanvas">
 <header class="top"><div class="nav">
   <a class="logo" href="index.html"><img src="logo.png" alt="上海众和包装机械有限公司 Logo"><div><strong>上海众和包装机械有限公司</strong><small>SHANGHAI ZHONGHE PACKAGING MACHINERY CO., LTD.</small></div></a>
   <nav class="menu">
@@ -64,6 +65,7 @@
   <div><h3 id="contactGalleryTitle"></h3><p id="contactGalleryText"></p></div>
 </div></section>
 <footer><div class="foot"><span id="footerText"></span><a class="admin-link" href="admin.html">管理后台</a></div></footer>
+</div>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lb-close" id="lbClose">×</button><button class="lb-prev" id="lbPrev">‹</button>
@@ -72,6 +74,32 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<script>
+(function(){
+  const canvas=document.getElementById('siteCanvas');
+  const BASE=1440;
+  function fitPage(){
+    if(!canvas) return;
+    const w=window.innerWidth;
+    const small=w<900;
+    canvas.style.transformOrigin='top left';
+    if(small){
+      const scale=Math.min(1,w/BASE);
+      canvas.style.width=BASE+'px';
+      canvas.style.transform='scale('+scale+')';
+      document.body.style.height=(canvas.scrollHeight*scale)+'px';
+    }else{
+      canvas.style.width='100%';
+      canvas.style.transform='none';
+      document.body.style.height='auto';
+    }
+  }
+  window.addEventListener('resize',fitPage);
+  window.addEventListener('orientationchange',fitPage);
+  window.addEventListener('load',()=>setTimeout(fitPage,80));
+  document.addEventListener('DOMContentLoaded',fitPage);
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
@@ -86,7 +114,7 @@ function text(id,key){const e=$(id);if(e)e.textContent=settings[key]??DEFAULTS[k
 function renderAboutFeatures(){
   const box=$('aboutFeatures'); if(!box) return;
   const items=settings.about_features||DEFAULTS.about_features||[];
-  box.innerHTML=items.map(x=>`<div class="feature"><div class="feature-icon">${esc(x[2]||'◇')}</div><b>${esc(x[0]||'')}</b><span>${esc(x[1]||'')}</span></div>`).join('');
+  box.innerHTML=items.map(x=>`<div class="feature"><div class="feature-icon">${esc('◇')}</div><b>${esc(x[0]||'')}</b><span>${esc(x[1]||'')}</span></div>`).join('');
 }
 function applySettings(){
   text('navHome','nav_home'); text('navAbout','nav_about'); text('navGallery','nav_gallery'); text('navSolution','nav_solution'); text('navContact','nav_contact');
