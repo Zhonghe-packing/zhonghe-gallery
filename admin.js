@@ -2,7 +2,7 @@ const {createClient}=supabase;
 const client=createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
 const bucket=window.SUPABASE_BUCKET;
 const defs=[['company','公司形象','Company','▦'],['factory','厂房环境','Factory','▤'],['workshop','生产车间','Workshop','⚙'],['vffs','VFFS设备','VFFS Machine','▥'],['food','食品包装','Food Packaging','◈'],['weighing','自动称重','Weighing System','⌗'],['cases','项目案例','Case Studies','▣'],['videos','视频中心','Video','▶']];
-let items=[],hero=null,heroCenter=null,heroLeft=null,heroRight=null;
+let items=[],heroDesktop=null,heroMobile=null;
 const SITE_DEFAULTS = {
   nav_home:'首页', nav_about:'公司概况', nav_gallery:'品牌图库', nav_solution:'解决方案', nav_contact:'联系我们',
   hero_eyebrow:'SHANGHAI ZHONGHE PACKAGING MACHINERY', hero_title:'品牌形象图库', hero_subtitle:'用影像，记录我们的专业与实力', hero_en:'BRAND GALLERY', hero_desc:'Photos & Videos　|　Our Factory · Our Machines · Our Team',
@@ -22,7 +22,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 function ext(file){const p=file.name.split('.');return p.length>1?p.pop().toLowerCase():'bin'}
 function pathFromUrl(url){const marker=`/storage/v1/object/public/${bucket}/`;const i=(url||'').indexOf(marker);return i>=0?url.slice(i+marker.length):null}
-function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>!['hero','hero_center','hero_left','hero_right'].includes(x.slot_key)).forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
+function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>!['hero','hero_desktop','hero_mobile','hero_center','hero_left','hero_right'].includes(x.slot_key)).forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
 
 function settingsFields(){
  const fields=[
@@ -67,14 +67,14 @@ window.saveSiteSettings=saveSiteSettings;
 
 async function loadAll(){
  const {data,error}=await client.from('gallery_items').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;items=data||[];hero=items.find(x=>x.slot_key==='hero')||null;heroCenter=items.find(x=>x.slot_key==='hero_center')||hero;heroLeft=items.find(x=>x.slot_key==='hero_left')||null;heroRight=items.find(x=>x.slot_key==='hero_right')||null;
+ if(error)throw error;items=data||[];heroDesktop=items.find(x=>x.slot_key==='hero_desktop')||items.find(x=>x.slot_key==='hero_center')||items.find(x=>x.slot_key==='hero')||null;heroMobile=items.find(x=>x.slot_key==='hero_mobile')||null;
  const row=items.find(x=>x.slot_key==='site_settings'); if(row?.description){try{siteSettings={...SITE_DEFAULTS,...JSON.parse(row.description)}}catch(e){}};
  renderHero();render(); settingsFields();
 }
 function renderHero(){
  const box=$('heroBox');
- const part=(key,label,item)=>`<div class="hero-part"><h3>${label}</h3><div class="hero-part-preview">${item?.image_url?`<img src="${esc(item.image_url)}" alt="">`:'<div>暂未设置</div>'}</div><div class="hero-part-actions"><label class="primary">${item?'更换':'上传'}图片 <input hidden type="file" accept="image/*" onchange="uploadHeroPart(this,'${key}')"></label>${item?`<button class="danger" onclick="deleteHeroPart('${key}')">删除</button>`:''}</div></div>`;
- box.innerHTML=part('hero_left','左侧背景图',heroLeft)+part('hero_center','中间主背景图（手机端使用）',heroCenter)+part('hero_right','右侧背景图',heroRight);
+ const part=(key,label,item,note)=>`<div class="hero-part"><h3>${label}</h3><p class="small hero-part-note">${note}</p><div class="hero-part-preview">${item?.image_url?`<img src="${esc(item.image_url)}" alt="">`:'<div>暂未设置</div>'}</div><div class="hero-part-actions"><label class="primary">${item?'更换':'上传'}图片 <input hidden type="file" accept="image/*" onchange="uploadHeroPart(this,'${key}')"></label>${item?`<button class="danger" onclick="deleteHeroPart('${key}')">删除</button>`:''}</div></div>`;
+ box.innerHTML=part('hero_desktop','电脑端主图',heroDesktop,'建议准备横向高清 Banner，例如 1920×600 或 2560×800。')+part('hero_mobile','手机端主图',heroMobile,'建议准备竖向高清 Banner，例如 750×1000 或 1080×1200。手机端会完整显示这张图。');
 }
 function render(){
  const groups=grouped();
@@ -168,29 +168,30 @@ async function uploadHeroPart(input,key){
  const file=input.files?.[0];if(!file)return;
  const path=`hero/${key}-${Date.now()}.${ext(file)}`;
  const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
- if(error)return toast('背景上传失败：'+error.message);
+ if(error)return toast('Banner 上传失败：'+error.message);
  const {data}=client.storage.from(bucket).getPublicUrl(path);
- const existing=key==='hero_center'?heroCenter:key==='hero_left'?heroLeft:heroRight;
- const payload={image_url:data.publicUrl,published:true,title:key==='hero_left'?'首页顶部左侧背景':key==='hero_right'?'首页顶部右侧背景':'首页顶部中间背景'};
+ const existing=key==='hero_desktop'?heroDesktop:heroMobile;
+ const title=key==='hero_desktop'?'首页电脑端主图':'首页手机端主图';
+ const payload={image_url:data.publicUrl,published:true,title};
  let r;
  if(existing){
    const old=pathFromUrl(existing.image_url);
    r=await client.from('gallery_items').update(payload).eq('id',existing.id);
-   if(r.error)return toast('背景保存失败：'+r.error.message);
+   if(r.error)return toast('Banner 保存失败：'+r.error.message);
    if(old)await client.storage.from(bucket).remove([old]);
  }else{
-   r=await client.from('gallery_items').insert({slot_key:key,title:payload.title,description:'',image_url:data.publicUrl,video_url:'',sort_order:key==='hero_left'?-100:(key==='hero_center'?-99:-98),published:true});
-   if(r.error)return toast('背景保存失败：'+r.error.message);
+   r=await client.from('gallery_items').insert({slot_key:key,title,description:'',image_url:data.publicUrl,video_url:'',sort_order:key==='hero_desktop'?-100:-99,published:true});
+   if(r.error)return toast('Banner 保存失败：'+r.error.message);
  }
- toast('背景已更新');await loadAll();
+ toast('Banner 已更新');await loadAll();
 }
 window.uploadHeroPart=uploadHeroPart;
 async function deleteHeroPart(key){
- const item=key==='hero_center'?heroCenter:key==='hero_left'?heroLeft:heroRight;
- if(!item)return;if(!confirm('确定删除这段首页背景吗？'))return;
+ const item=key==='hero_desktop'?heroDesktop:heroMobile;
+ if(!item)return;if(!confirm('确定删除这张首页 Banner 吗？'))return;
  const p=pathFromUrl(item.image_url);if(p)await client.storage.from(bucket).remove([p]);
  const {error}=await client.from('gallery_items').delete().eq('id',item.id);if(error)return toast('删除失败：'+error.message);
- toast('背景已删除');await loadAll();
+ toast('Banner 已删除');await loadAll();
 }
 window.deleteHeroPart=deleteHeroPart;
 function showLogin(){$('loginBox').style.display='block';$('dashboard').style.display='none'}
