@@ -10,7 +10,16 @@
 <body>
 <div class="site-canvas" id="siteCanvas">
 <header class="top"><div class="nav">
-  <a class="logo" href="index.html"><img src="logo.png" alt="上海众和包装机械有限公司 Logo"><div><strong>上海众和包装机械有限公司</strong><small>SHANGHAI ZHONGHE PACKAGING MACHINERY CO., LTD.</small></div></a>
+  <a class="logo" href="index.html" aria-label="上海众和包装机械有限公司">
+    <img class="logo-brand-image logo-brand-desktop" src="logo-brand.png" alt="上海众和包装机械有限公司｜SHANGHAI ZHONGHE PACKAGING MACHINERY CO., LTD.">
+    <span class="logo-brand-mobile" aria-hidden="true">
+      <img src="logo.png" alt="">
+      <span class="mobile-brand-copy">
+        <strong>上海众和包装机械有限公司</strong>
+        <small>SHANGHAI ZHONGHE PACKAGING MACHINERY CO., LTD.</small>
+      </span>
+    </span>
+  </a>
   <nav class="menu">
     <a id="navHome" href="index.html">首页</a>
     <a id="navAbout" href="#about">公司概况</a>
@@ -170,6 +179,26 @@ async function load(){
  renderFeatured();
 }
 window.selectSlot=selectSlot;
+
+// V43: make the Chinese and English company-name lines have exactly the same
+// rendered visual width on both desktop and mobile.
+function syncBrandWidths(){
+  const logo=document.querySelector('.logo');
+  if(!logo) return;
+  const zh=logo.querySelector('strong');
+  const en=logo.querySelector('small');
+  if(!zh||!en) return;
+  en.style.transform='none';
+  const zw=zh.getBoundingClientRect().width;
+  const ew=en.getBoundingClientRect().width;
+  if(zw>0 && ew>0) en.style.transform=`scaleX(${zw/ew})`;
+}
+function scheduleBrandWidthSync(){
+  requestAnimationFrame(()=>requestAnimationFrame(syncBrandWidths));
+}
+window.addEventListener('load',scheduleBrandWidthSync);
+window.addEventListener('resize',scheduleBrandWidthSync);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBrandWidthSync);
 
 // V30: desktop Banner width is measured ONCE at the first desktop render and
 // immediately converted to a fixed CSS-pixel value. Resize never recalculates it.
