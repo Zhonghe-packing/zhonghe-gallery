@@ -22,6 +22,48 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 function ext(file){const p=file.name.split('.');return p.length>1?p.pop().toLowerCase():'bin'}
 function pathFromUrl(url){const marker=`/storage/v1/object/public/${bucket}/`;const i=(url||'').indexOf(marker);return i>=0?url.slice(i+marker.length):null}
+
+async function makeVideoPoster(file){
+  return await new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const v=document.createElement('video');
+    v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
+    let done=false;
+    const cleanup=()=>{URL.revokeObjectURL(url);v.remove();};
+    const fail=()=>{if(done)return;done=true;cleanup();reject(new Error('无法读取视频画面'))};
+    v.onerror=fail;
+    v.onloadedmetadata=()=>{
+      const target=Math.min(0.2, Math.max(0, (v.duration||1)*0.02));
+      try{v.currentTime=target}catch(e){}
+    };
+    v.onseeked=()=>{
+      if(done)return;
+      try{
+        const w=v.videoWidth||1280,h=v.videoHeight||720;
+        const maxW=1280, scale=Math.min(1,maxW/w), cw=Math.max(1,Math.round(w*scale)), ch=Math.max(1,Math.round(h*scale));
+        const c=document.createElement('canvas');c.width=cw;c.height=ch;
+        const ctx=c.getContext('2d');ctx.drawImage(v,0,0,cw,ch);
+        c.toBlob(blob=>{if(!blob){fail();return;}done=true;cleanup();resolve(blob)},'image/jpeg',0.82);
+      }catch(e){fail()}
+    };
+    v.load();
+  });
+}
+async function uploadVideoWithPoster(file,slot){
+  const stamp=Date.now()+'-'+Math.random().toString(36).slice(2,7);
+  const videoPath=`gallery/${slot}/video-${stamp}.${ext(file)}`;
+  const vr=await client.storage.from(bucket).upload(videoPath,file,{upsert:false,contentType:file.type||'video/mp4'});
+  if(vr.error)throw vr.error;
+  const vd=client.storage.from(bucket).getPublicUrl(videoPath).data.publicUrl;
+  let posterUrl='';
+  try{
+    const blob=await makeVideoPoster(file);
+    const posterPath=`gallery/${slot}/poster-${stamp}.jpg`;
+    const pr=await client.storage.from(bucket).upload(posterPath,blob,{upsert:false,contentType:'image/jpeg'});
+    if(!pr.error)posterUrl=client.storage.from(bucket).getPublicUrl(posterPath).data.publicUrl;
+  }catch(e){ console.warn('视频封面生成失败：',e); }
+  return {videoPath,videoUrl:vd,posterUrl};
+}
 function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>!['hero','hero_desktop','hero_mobile','hero_center','hero_left','hero_right'].includes(x.slot_key)).forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
 
 function settingsFields(){
@@ -120,11 +162,18 @@ async function uploadBatch(input,slot,type){
  const group=items.filter(x=>x.slot_key===slot&&x.slot_key!=='hero');
  let next=Math.max(0,...group.map(x=>Number(x.sort_order)||0))+1;
  for(const file of files){
-   const path=`gallery/${slot}/${type}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext(file)}`;
-   const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
-   if(error){toast('上传失败：'+error.message);continue}
-   const {data}=client.storage.from(bucket).getPublicUrl(path);
-   const payload={slot_key:slot,title:file.name.replace(/\.[^.]+$/,''),description:'',image_url:type==='image'?data.publicUrl:'',video_url:type==='video'?data.publicUrl:'',sort_order:next++,published:true};
+   let imageUrl='', videoUrl='';
+   try{
+     if(type==='video'){
+       const r=await uploadVideoWithPoster(file,slot); videoUrl=r.videoUrl; imageUrl=r.posterUrl;
+     }else{
+       const path=`gallery/${slot}/${type}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext(file)}`;
+       const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
+       if(error)throw error;
+       imageUrl=client.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+     }
+   }catch(e){toast('上传失败：'+e.message);continue}
+   const payload={slot_key:slot,title:file.name.replace(/\.[^.]+$/,''),description:'',image_url:imageUrl,video_url:videoUrl,sort_order:next++,published:true};
    const r=await client.from('gallery_items').insert(payload);
    if(r.error){toast('数据库写入失败：'+r.error.message);continue}
  }
@@ -133,15 +182,20 @@ async function uploadBatch(input,slot,type){
 window.uploadBatch=uploadBatch;
 async function replaceMedia(id,input,type){
  const file=input.files?.[0];if(!file)return;const x=items.find(a=>a.id===id);if(!x)return;
- const path=`gallery/${x.slot_key}/${type}-${Date.now()}.${ext(file)}`;
- const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
- if(error)return toast('上传失败：'+error.message);
- const {data}=client.storage.from(bucket).getPublicUrl(path);
- const old=type==='image'?x.image_url:x.video_url;
- const payload=type==='image'?{image_url:data.publicUrl}:{video_url:data.publicUrl};
+ let imageUrl='',videoUrl='',newPaths=[];
+ if(type==='video'){
+   try{const r=await uploadVideoWithPoster(file,x.slot_key);videoUrl=r.videoUrl;imageUrl=r.posterUrl;newPaths=[pathFromUrl(videoUrl),pathFromUrl(imageUrl)].filter(Boolean)}catch(e){return toast('上传失败：'+e.message)}
+ }else{
+   const path=`gallery/${x.slot_key}/${type}-${Date.now()}.${ext(file)}`;
+   const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
+   if(error)return toast('上传失败：'+error.message);
+   imageUrl=client.storage.from(bucket).getPublicUrl(path).data.publicUrl;newPaths=[path];
+ }
+ const oldPaths=[pathFromUrl(x.image_url),pathFromUrl(x.video_url)].filter(Boolean);
+ const payload=type==='video'?{image_url:imageUrl,video_url:videoUrl}:{image_url:imageUrl,video_url:''};
  const r=await client.from('gallery_items').update(payload).eq('id',id);
- if(r.error)return toast('数据库更新失败：'+r.error.message);
- const oldPath=pathFromUrl(old);if(oldPath)await client.storage.from(bucket).remove([oldPath]);
+ if(r.error){await client.storage.from(bucket).remove(newPaths);return toast('数据库更新失败：'+r.error.message)}
+ if(oldPaths.length)await client.storage.from(bucket).remove(oldPaths);
  toast('已替换媒体');await loadAll();
 }
 window.replaceMedia=replaceMedia;

@@ -64,7 +64,6 @@
 
   <div class="video-banner" id="video">
     <div class="video-copy"><h3 id="videoTitle">VFFS 包装系统方案演示视频</h3><p id="videoDesc"></p><button class="video-btn" id="videoCenterBtn">浏览视频内容　▶</button></div>
-    <div class="play">▶</div>
   </div>
 </main>
 
@@ -141,13 +140,13 @@ function makeTabs(){
 function placeholder(slot){return `<div class="placeholder">${slot==='vffs'||slot==='videos'?'VFFS':'ZH'}</div>`}
 function coverCard(slot){
  const d=defs.find(x=>x[0]===slot), arr=all.filter(x=>x.slot_key===slot), item=arr[0];
- let media=item?.image_url?`<img src="${esc(item.image_url)}" alt="${esc(d?.[1]||slot)}" loading="lazy">`:item?.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="metadata"></video>`:placeholder(slot);
+ let media=item?.image_url?`<img src="${esc(item.image_url)}" alt="${esc(d?.[1]||slot)}" loading="lazy">`:item?.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="auto"></video>`:placeholder(slot);
  return `<article class="card cover-card" data-slot="${slot}" onclick="selectSlot('${slot}',true)"><div class="media">${media}<div class="label"><b>${esc(d?.[1]||slot)}</b><span>${arr.length?arr.length+' 个内容':'暂无内容 · 后台可上传'}</span></div><div class="arrow">→</div></div></article>`;
 }
 function itemCard(item,i){
  const d=defs.find(x=>x[0]===item.slot_key), title=item.title||d?.[1]||'图库';
- const media=item.image_url?`<img src="${esc(item.image_url)}" alt="${esc(title)}" loading="lazy">`:item.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="metadata"></video>`:placeholder(item.slot_key);
- return `<article class="card photo-card" onclick="openLightbox(${i})"><div class="media">${media}${item.video_url?'<div class="play small-play">▶</div>':''}<div class="label"><b>${esc(title)}</b><span>${esc(item.description||'')}</span></div></div></article>`;
+ const media=item.image_url?`<img src="${esc(item.image_url)}" alt="${esc(title)}" loading="lazy">`:item.video_url?`<video src="${esc(item.video_url)}" muted playsinline preload="auto"></video>`:placeholder(item.slot_key);
+ return `<article class="card photo-card" onclick="openLightbox(${i})"><div class="media">${media}<div class="label"><b>${esc(title)}</b><span>${esc(item.description||'')}</span></div></div></article>`;
 }
 function renderAlbum(){
  const d=defs.find(x=>x[0]===currentSlot); album=all.filter(x=>x.slot_key===currentSlot);
@@ -264,7 +263,7 @@ if('IntersectionObserver' in window){
 }
 
 function openLightbox(i){currentIndex=i;showLightboxItem()}
-function showLightboxItem(){const item=album[currentIndex];if(!item)return;$('lbMedia').innerHTML=item.image_url?`<img src="${esc(item.image_url)}" alt="">`:item.video_url?`<video src="${esc(item.video_url)}" controls autoplay playsinline></video>`:'';$('lbCaption').textContent=(item.title||'')+(item.description?' · '+item.description:'');$('lightbox').classList.add('show');$('lightbox').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll')}
+function showLightboxItem(){const item=album[currentIndex];if(!item)return;$('lbMedia').innerHTML=item.video_url?`<video src="${esc(item.video_url)}" controls autoplay playsinline></video>`:item.image_url?`<img src="${esc(item.image_url)}" alt="">`:'';$('lbCaption').textContent=(item.title||'')+(item.description?' · '+item.description:'');$('lightbox').classList.add('show');$('lightbox').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll')}
 function closeLightbox(){$('lightbox').classList.remove('show');$('lightbox').setAttribute('aria-hidden','true');$('lbMedia').innerHTML='';document.body.classList.remove('no-scroll')}
 function step(n){if(!album.length)return;currentIndex=(currentIndex+n+album.length)%album.length;showLightboxItem()}
 $('lbClose').onclick=closeLightbox;$('lbPrev').onclick=()=>step(-1);$('lbNext').onclick=()=>step(1);$('lightbox').onclick=e=>{if(e.target===$('lightbox'))closeLightbox()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});$('videoCenterBtn').onclick=()=>selectSlot('videos',window.innerWidth > 767);
