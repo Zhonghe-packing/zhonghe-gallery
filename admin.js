@@ -2,7 +2,7 @@ const {createClient}=supabase;
 const client=createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
 const bucket=window.SUPABASE_BUCKET;
 const defs=[['company','公司形象','Company','▦'],['factory','厂房环境','Factory','▤'],['workshop','生产车间','Workshop','⚙'],['vffs','VFFS设备','VFFS Machine','▥'],['food','食品包装','Food Packaging','◈'],['weighing','自动称重','Weighing System','⌗'],['cases','项目案例','Case Studies','▣'],['videos','视频中心','Video','▶']];
-let items=[],hero=null;
+let items=[],hero=null,heroCenter=null,heroLeft=null,heroRight=null;
 const SITE_DEFAULTS = {
   nav_home:'首页', nav_about:'公司概况', nav_gallery:'品牌图库', nav_solution:'解决方案', nav_contact:'联系我们',
   hero_eyebrow:'SHANGHAI ZHONGHE PACKAGING MACHINERY', hero_title:'品牌形象图库', hero_subtitle:'用影像，记录我们的专业与实力', hero_en:'BRAND GALLERY', hero_desc:'Photos & Videos　|　Our Factory · Our Machines · Our Team',
@@ -22,7 +22,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 function ext(file){const p=file.name.split('.');return p.length>1?p.pop().toLowerCase():'bin'}
 function pathFromUrl(url){const marker=`/storage/v1/object/public/${bucket}/`;const i=(url||'').indexOf(marker);return i>=0?url.slice(i+marker.length):null}
-function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>x.slot_key!=='hero').forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
+function grouped(){const out={};defs.forEach(d=>out[d[0]]=[]);items.filter(x=>!['hero','hero_center','hero_left','hero_right'].includes(x.slot_key)).forEach(x=>(out[x.slot_key]??=[]).push(x));return out}
 
 function settingsFields(){
  const fields=[
@@ -67,16 +67,14 @@ window.saveSiteSettings=saveSiteSettings;
 
 async function loadAll(){
  const {data,error}=await client.from('gallery_items').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;items=data||[];hero=items.find(x=>x.slot_key==='hero')||null;
+ if(error)throw error;items=data||[];hero=items.find(x=>x.slot_key==='hero')||null;heroCenter=items.find(x=>x.slot_key==='hero_center')||hero;heroLeft=items.find(x=>x.slot_key==='hero_left')||null;heroRight=items.find(x=>x.slot_key==='hero_right')||null;
  const row=items.find(x=>x.slot_key==='site_settings'); if(row?.description){try{siteSettings={...SITE_DEFAULTS,...JSON.parse(row.description)}}catch(e){}};
  renderHero();render(); settingsFields();
 }
 function renderHero(){
  const box=$('heroBox');
- box.innerHTML=`<div class="hero-preview">${hero?.image_url?`<img src="${esc(hero.image_url)}" alt="">`:'<div>暂未设置顶部背景</div>'}</div>
- <div class="hero-actions"><label class="secondary">上传/更换背景 <input hidden type="file" accept="image/*" onchange="uploadHero(this)"></label>
- ${hero?.image_url?'<button class="danger" onclick="deleteHero()">删除背景</button>':''}
- </div>`;
+ const part=(key,label,item)=>`<div class="hero-part"><h3>${label}</h3><div class="hero-part-preview">${item?.image_url?`<img src="${esc(item.image_url)}" alt="">`:'<div>暂未设置</div>'}</div><div class="hero-part-actions"><label class="primary">${item?'更换':'上传'}图片 <input hidden type="file" accept="image/*" onchange="uploadHeroPart(this,'${key}')"></label>${item?`<button class="danger" onclick="deleteHeroPart('${key}')">删除</button>`:''}</div></div>`;
+ box.innerHTML=part('hero_left','左侧背景图',heroLeft)+part('hero_center','中间主背景图（手机端使用）',heroCenter)+part('hero_right','右侧背景图',heroRight);
 }
 function render(){
  const groups=grouped();
@@ -166,30 +164,35 @@ async function moveItem(id,delta){
  toast('排序已更新');await loadAll();
 }
 window.moveItem=moveItem;
-async function uploadHero(input){
+async function uploadHeroPart(input,key){
  const file=input.files?.[0];if(!file)return;
- const path=`hero/background-${Date.now()}.${ext(file)}`;
+ const path=`hero/${key}-${Date.now()}.${ext(file)}`;
  const {error}=await client.storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||undefined});
  if(error)return toast('背景上传失败：'+error.message);
  const {data}=client.storage.from(bucket).getPublicUrl(path);
- if(hero){
-   const old=pathFromUrl(hero.image_url);if(old)await client.storage.from(bucket).remove([old]);
-   const r=await client.from('gallery_items').update({image_url:data.publicUrl,published:true,title:'图库首页背景'}).eq('id',hero.id);
+ const existing=key==='hero_center'?heroCenter:key==='hero_left'?heroLeft:heroRight;
+ const payload={image_url:data.publicUrl,published:true,title:key==='hero_left'?'首页顶部左侧背景':key==='hero_right'?'首页顶部右侧背景':'首页顶部中间背景'};
+ let r;
+ if(existing){
+   const old=pathFromUrl(existing.image_url);
+   r=await client.from('gallery_items').update(payload).eq('id',existing.id);
    if(r.error)return toast('背景保存失败：'+r.error.message);
+   if(old)await client.storage.from(bucket).remove([old]);
  }else{
-   const r=await client.from('gallery_items').insert({slot_key:'hero',title:'图库首页背景',description:'',image_url:data.publicUrl,video_url:'',sort_order:0,published:true});
+   r=await client.from('gallery_items').insert({slot_key:key,title:payload.title,description:'',image_url:data.publicUrl,video_url:'',sort_order:key==='hero_left'?-100:(key==='hero_center'?-99:-98),published:true});
    if(r.error)return toast('背景保存失败：'+r.error.message);
  }
- toast('顶部背景已更新');await loadAll();
+ toast('背景已更新');await loadAll();
 }
-window.uploadHero=uploadHero;
-async function deleteHero(){
- if(!hero)return;if(!confirm('确定删除首页顶部背景吗？'))return;
- const p=pathFromUrl(hero.image_url);if(p)await client.storage.from(bucket).remove([p]);
- const {error}=await client.from('gallery_items').delete().eq('id',hero.id);if(error)return toast('删除失败：'+error.message);
+window.uploadHeroPart=uploadHeroPart;
+async function deleteHeroPart(key){
+ const item=key==='hero_center'?heroCenter:key==='hero_left'?heroLeft:heroRight;
+ if(!item)return;if(!confirm('确定删除这段首页背景吗？'))return;
+ const p=pathFromUrl(item.image_url);if(p)await client.storage.from(bucket).remove([p]);
+ const {error}=await client.from('gallery_items').delete().eq('id',item.id);if(error)return toast('删除失败：'+error.message);
  toast('背景已删除');await loadAll();
 }
-window.deleteHero=deleteHero;
+window.deleteHeroPart=deleteHeroPart;
 function showLogin(){$('loginBox').style.display='block';$('dashboard').style.display='none'}
 async function showDashboard(session){$('loginBox').style.display='none';$('dashboard').style.display='block';$('userLabel').textContent=session.user.email;try{await loadAll();await loadSiteSettings()}catch(e){$('adminGrid').innerHTML=`<div class="notice">读取后台失败：${esc(e.message)}</div>`}}
 $('loginBtn').onclick=async()=>{const email=$('email').value.trim(),password=$('password').value;$('loginStatus').textContent='登录中…';const {error}=await client.auth.signInWithPassword({email,password});$('loginStatus').textContent=error?'登录失败：'+error.message:''};

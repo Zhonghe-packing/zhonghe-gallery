@@ -1,12 +1,12 @@
 :root{--navy:#061b35;--blue:#0867ed;--cyan:#20a8ff;--text:#12253d;--muted:#71839a;--line:#dbe6f1;--bg:#f5f8fc}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;color:var(--text);background:#fff}body.no-scroll{overflow:hidden}
 a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}button{cursor:pointer}
-.top{height:76px;background:rgba(4,24,48,.98);color:#fff;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.12)}
+.top{height:76px;background:rgba(4,24,48,.98);color:#fff;position:relative;z-index:50;border-bottom:1px solid rgba(255,255,255,.12)}
 .nav{height:100%;max-width:1700px;margin:auto;padding:0 22px;display:flex;align-items:center;gap:26px}.logo{display:flex;align-items:center;gap:11px;min-width:390px}.logo img{width:49px;height:49px;object-fit:contain;filter:none}.logo strong{display:block;font-size:18px;line-height:1.2;width:285px;white-space:nowrap}
 .logo small{display:block;font-size:9px;opacity:.72;letter-spacing:.04em;margin-top:4px;width:365px;white-space:nowrap;transform:scaleX(.78);transform-origin:left center}
 .menu{display:flex;gap:52px;align-items:center;flex:1;justify-content:center}.menu a{font-size:16px;color:#d4e2f0;padding:29px 0;position:relative;white-space:nowrap}.menu a:hover,.menu a.active{color:#fff}.menu a.active:after{display:none}.lang{font-size:12px;white-space:nowrap;color:#b9ccde}
-.hero{height:430px;position:relative;overflow:hidden;background:radial-gradient(circle at 76% 42%,rgba(55,170,255,.32),transparent 28%),linear-gradient(105deg,#03172f,#0a3d67 55%,#a8d2eb)}.hero-photo{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:.88}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,20,42,.98) 0%,rgba(2,25,48,.88) 38%,rgba(2,25,48,.22) 76%,rgba(2,25,48,.06))}.gridline{position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.16) 1px,transparent 1px);background-size:54px 54px;transform:perspective(500px) rotateX(60deg) scale(1.5);transform-origin:bottom}
-.hero-content{position:relative;z-index:2;max-width:1700px;margin:auto;padding:92px 22px;color:#fff}.eyebrow{font-size:13px;letter-spacing:.2em;color:#58c9ff}.hero h1{font-size:64px;line-height:1.05;margin:15px 0 12px}.subtitle{font-size:23px;margin:0}.hero-line{width:90px;height:3px;background:var(--cyan);margin:23px 0;box-shadow:0 0 18px var(--cyan)}.hero-en{font-size:13px;letter-spacing:.16em}.hero-desc{font-size:12px;color:#c6d8e9;margin-top:8px}
+.hero{height:430px;position:relative;overflow:hidden;background:#061b35;display:block}.hero-bg{position:absolute;top:0;height:100%;background-position:center center;background-repeat:no-repeat;background-size:auto 430px;overflow:hidden;z-index:0}.hero-bg-left{left:0;width:33.333333%;background-color:#061b35}.hero-bg-center{left:33.333333%;width:33.333333%;background-color:#123f63}.hero-bg-right{left:66.666666%;right:auto;width:33.333333%;background-color:#061b35}.hero-photo{display:none}.hero-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(2,20,42,.98) 0%,rgba(2,25,48,.88) 38%,rgba(2,25,48,.22) 76%,rgba(2,25,48,.06))}.gridline{position:absolute;inset:0;z-index:1;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.16) 1px,transparent 1px);background-size:54px 54px;transform:perspective(500px) rotateX(60deg) scale(1.5);transform-origin:bottom}
+.hero-content{position:absolute;z-index:2;left:33.333333%;top:0;width:33.333333%;height:100%;margin:0;padding:92px 22px;color:#fff}.eyebrow{font-size:13px;letter-spacing:.2em;color:#58c9ff}.hero h1{font-size:64px;line-height:1.05;margin:15px 0 12px}.subtitle{font-size:23px;margin:0}.hero-line{width:90px;height:3px;background:var(--cyan);margin:23px 0;box-shadow:0 0 18px var(--cyan)}.hero-en{font-size:13px;letter-spacing:.16em}.hero-desc{font-size:12px;color:#c6d8e9;margin-top:8px}
 .tabs{max-width:1700px;margin:-1px auto 0;padding:0 22px;position:relative;z-index:5}.tabbar{display:grid;grid-template-columns:repeat(8,1fr);background:#fff;border:1px solid var(--line);box-shadow:0 14px 34px rgba(19,55,93,.14)}.tab{border:0;border-right:1px solid #e4ebf3;padding:20px 7px;text-align:center;color:#50657b;background:#fff;transition:.2s}.tab:last-child{border:0}.tab:hover,.tab.active{color:#fff;background:linear-gradient(135deg,#0867ed,#0c4fc2)}.tab .icon{font-size:21px;display:block;margin-bottom:7px}.tab b{display:block;font-size:14px}.tab span:last-child{font-size:10px}
 .section{max-width:1700px;margin:auto;padding:55px 22px}.section-title{display:flex;align-items:end;justify-content:space-between;margin-bottom:22px}.section-title h2{font-size:30px;margin:0;display:inline-block}.section-title em{font-style:normal;font-size:11px;color:#9aaabc;margin-left:10px;letter-spacing:.08em}.album-title{display:inline-block;margin:0 0 1px 20px;color:#698097;font-size:13px}.hint{font-size:12px;color:var(--muted)}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{position:relative;border-radius:7px;overflow:hidden;background:#09223d;box-shadow:0 9px 27px rgba(12,39,66,.13);cursor:pointer}.media{height:270px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0c2945,#d6e8f6)}.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(2,22,43,.86))}.placeholder{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.32);font-size:64px;font-weight:800;letter-spacing:.08em}.label{position:absolute;z-index:3;left:20px;bottom:16px;color:#fff;text-shadow:0 2px 8px #00182e}.label b{display:block;font-size:19px}.label span{font-size:11px}.arrow{position:absolute;z-index:4;right:16px;bottom:15px;width:34px;height:34px;border:1px solid rgba(255,255,255,.9);border-radius:50%;display:grid;place-items:center;color:#fff}.photo-card .media{height:270px}.small-play{width:54px;height:54px;font-size:19px}
@@ -60,9 +60,125 @@ a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}button{c
 .contact-grid,.foot{max-width:1600px;padding-left:18px;padding-right:18px}
 .menu a.active:after{display:none!important}
 
-/* V7: desktop keeps the original centered layout; phones scale the complete desktop canvas. */
-.site-canvas{width:100%;margin:0 auto;transform-origin:top left;}
-@media(max-width:899px){
-  html,body{overflow-x:hidden;}
-  .site-canvas{width:1440px;will-change:transform;}
+/* V9: fixed desktop canvas. Browser width never scales the public site.
+   Narrow windows simply show/crop the fixed canvas rather than stretching it. */
+html,body{min-width:1600px;}
+.site-canvas{width:1600px;max-width:none;margin:0 auto;transform:none!important;transform-origin:top left;}
+@media(max-width:1599px){
+  .site-canvas{margin-left:0;margin-right:0;}
+}
+
+
+/* V10 mobile: keep the fixed desktop canvas, but use the dark brand color
+   outside the canvas so any viewport remainder never becomes a white page. */
+@media(max-width:767px){
+  html,body{background:#061b35;}
+  body{overflow-x:hidden;}
+  .site-canvas{background:#fff;}
+}
+
+
+/* V11: three-part hero background. Side artwork exists only on desktop; the center image is the mobile hero. */
+@media(max-width:767px){
+  .hero{display:block;background:#061b35;}
+  .hero-bg-left,.hero-bg-right{display:none!important;background-image:none!important;}
+  .hero-bg-center{display:block;left:0;right:auto;width:100%;height:100%;background-size:auto 100%;background-position:center center;}
+  .hero-content{left:0;top:0;width:100%;height:100%;padding:92px 22px;}
+}
+.hero-preview-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:min(1100px,100%)}
+.hero-part{border:1px solid #dbe5ef;border-radius:8px;overflow:hidden;background:#f3f7fb}
+.hero-part h3{font-size:13px;margin:0;padding:11px 12px;background:#f8fbff;border-bottom:1px solid #e5edf5}
+.hero-part-preview{height:150px;background:linear-gradient(135deg,#0a2947,#7da9c5);display:grid;place-items:center;color:#fff;overflow:hidden}
+.hero-part-preview img{width:100%;height:100%;object-fit:cover}
+.hero-part-actions{display:flex;gap:7px;padding:10px;flex-wrap:wrap}
+@media(max-width:760px){.hero-preview-three{grid-template-columns:1fr}.hero-part-preview{height:170px}}
+
+/* V23: full-width three-part hero slots, with each uploaded image rendered at a fixed pixel size.
+   The 18.7% / 62.6% / 18.7% areas remain responsive, but the artwork itself never stretches.
+   The fixed artwork is centered inside each slot and clipped when the viewport is narrower. */
+.hero{
+  width:100vw;
+  max-width:none;
+  margin-left:50%;
+  transform:translateX(-50%);
+}
+.hero-bg-left,.hero-bg-center,.hero-bg-right{
+  height:430px;
+  background-size:auto 430px !important;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+.hero-bg-left{left:0;width:18.7vw;}
+.hero-bg-center{left:18.7vw;width:62.6vw;}
+.hero-bg-right{left:81.3vw;width:18.7vw;}
+.hero-content{
+  left:18.7vw;
+  width:62.6vw;
+  transform:none;
+  padding-left:42px;
+  padding-right:42px;
+}
+@media(max-width:767px){
+  .hero{width:100vw;margin-left:50%;transform:translateX(-50%);}
+  .hero-bg-left,.hero-bg-right{display:none!important;}
+  .hero-bg-center{left:0;width:100vw;background-size:auto 430px !important;background-position:center center;}
+  .hero-content{left:0;width:100vw;transform:none;}
+}
+
+/* V26: calculate the three-part banner widths once on first load, then lock them.
+   The first viewport width is split 18.7% / 62.6% / 18.7%.
+   After that, browser resize never recalculates the artwork widths.
+   The viewport only clips the fixed artwork canvas. */
+.hero{
+  width:var(--hero-canvas-width,1600px);
+  max-width:none;
+  margin-left:calc(50% - var(--hero-canvas-width,1600px) / 2);
+  transform:none;
+  overflow:hidden;
+  background:#061b35;
+}
+.hero-art-canvas{
+  position:absolute;
+  top:0;
+  left:50%;
+  width:var(--hero-canvas-width,1600px);
+  height:430px;
+  margin-left:calc(var(--hero-canvas-width,1600px) / -2);
+  overflow:hidden;
+  z-index:0;
+}
+.hero-art-canvas .hero-bg{
+  position:absolute;
+  top:0;
+  height:430px;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:auto 430px !important;
+  overflow:hidden;
+}
+.hero-art-canvas .hero-bg-left{left:0;width:var(--hero-left-width,299px);}
+.hero-art-canvas .hero-bg-center{left:var(--hero-left-width,299px);width:var(--hero-center-width,1002px);}
+.hero-art-canvas .hero-bg-right{left:calc(var(--hero-left-width,299px) + var(--hero-center-width,1002px));width:var(--hero-right-width,299px);}
+.hero-content{
+  position:absolute;
+  z-index:2;
+  left:50%;
+  top:0;
+  width:var(--hero-center-width,1002px);
+  height:100%;
+  margin-left:calc(var(--hero-center-width,1002px) / -2);
+  transform:none;
+  padding-left:42px;
+  padding-right:42px;
+}
+@media(max-width:767px){
+  .hero{width:var(--hero-canvas-width,1600px);margin-left:calc(50% - var(--hero-canvas-width,1600px) / 2);transform:none;}
+  .hero-art-canvas{
+    left:50%;
+    width:var(--hero-center-width,1002px);
+    margin-left:calc(var(--hero-center-width,1002px) / -2);
+  }
+  .hero-art-canvas .hero-bg-left,.hero-art-canvas .hero-bg-right{display:none!important;background-image:none!important;}
+  .hero-art-canvas .hero-bg-center{display:block;left:0;width:var(--hero-center-width,1002px);background-size:auto 430px !important;background-position:center center;}
+  .hero-content{left:50%;width:var(--hero-center-width,1002px);margin-left:calc(var(--hero-center-width,1002px) / -2);padding:92px 42px;}
 }

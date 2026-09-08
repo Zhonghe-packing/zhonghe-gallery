@@ -1,1 +1,4 @@
-V7：桌面端保持居中并保留左右留白；手机版不重新排版，而是将完整桌面网页版按比例缩小显示。公司概况四个图标统一为◇。
+V10: mobile keeps the fixed desktop canvas, uses the dark brand color outside the canvas, and category/gallery clicks no longer auto-scroll on mobile; desktop retains smooth gallery scrolling.
+
+
+V16 Banner：电脑端全宽三段比例固定为 19% / 62% / 19%。文字位于中间 63.2% 区域左侧；手机端隐藏左右两侧，仅显示中间主背景。

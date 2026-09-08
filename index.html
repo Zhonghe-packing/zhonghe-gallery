@@ -22,6 +22,11 @@
 </div></header>
 
 <section class="hero" id="hero">
+  <div class="hero-art-canvas" aria-hidden="true">
+    <div class="hero-bg hero-bg-left"></div>
+    <div class="hero-bg hero-bg-center"></div>
+    <div class="hero-bg hero-bg-right"></div>
+  </div>
   <div class="hero-photo"></div><div class="hero-shade"></div><div class="gridline"></div>
   <div class="hero-content">
     <div class="eyebrow" id="heroEyebrow"></div>
@@ -76,35 +81,39 @@
 
 <script>
 (function(){
+  // V9: keep the public website at a fixed desktop canvas.
+  // The page no longer scales with browser width; narrow windows simply crop
+  // the fixed canvas instead of stretching or shrinking the design.
   const canvas=document.getElementById('siteCanvas');
-  const BASE=1440;
-  function fitPage(){
-    if(!canvas) return;
-    const w=window.innerWidth;
-    const small=w<900;
+  if(canvas){
+    canvas.style.width='1600px';
+    canvas.style.maxWidth='none';
+    canvas.style.margin='0 auto';
+    canvas.style.transform='none';
     canvas.style.transformOrigin='top left';
-    if(small){
-      const scale=Math.min(1,w/BASE);
-      canvas.style.width=BASE+'px';
-      canvas.style.transform='scale('+scale+')';
-      document.body.style.height=(canvas.scrollHeight*scale)+'px';
-    }else{
-      canvas.style.width='100%';
-      canvas.style.transform='none';
-      document.body.style.height='auto';
-    }
   }
-  window.addEventListener('resize',fitPage);
-  window.addEventListener('orientationchange',fitPage);
-  window.addEventListener('load',()=>setTimeout(fitPage,80));
-  document.addEventListener('DOMContentLoaded',fitPage);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
 const {createClient}=supabase, client=createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY);
-const DEFAULTS={"nav_home": "首页", "nav_about": "公司概况", "nav_gallery": "品牌图库", "nav_solution": "解决方案", "nav_contact": "联系我们", "hero_eyebrow": "SHANGHAI ZHONGHE PACKAGING MACHINERY", "hero_title": "品牌形象图库", "hero_subtitle": "用影像，记录我们的专业与实力", "hero_en": "BRAND GALLERY", "hero_desc": "Photos & Videos　|　Our Factory · Our Machines · Our Team", "about_title": "公司概况", "about_en": "ABOUT US", "about_text": "上海众和包装机械有限公司是一家专注于 VFFS 立式包装机及食品包装解决方案的高新技术企业。公司拥有专业的研发团队和先进的制造工艺，致力于为客户提供高效、稳定、智能的包装设备。", "about_features": [["高品质设备","精工制造 品质可靠","◇"],["定制化方案","满足多样化需求","⚙"],["全球服务","快速响应 专业支持","◎"],["合作共赢","与客户共同成长","♢"]], "gallery_title": "精选图库", "gallery_en": "FEATURED GALLERY", "video_title": "VFFS 包装系统方案演示视频", "video_desc": "从薄膜放卷、制袋、计量到成品输出，展示高效、稳定、智能的包装解决方案。", "video_button": "浏览视频内容　▶", "contact_company_title": "上海众和包装机械有限公司", "contact_company_text": "专注包装机械及自动化包装系统，为食品及相关行业提供设备与整体解决方案。", "contact_title": "联系我们", "contact_address": "地址：上海市松江区玉佳支路88号", "contact_phone": "电话：021-57817120-106", "contact_mobile": "手机：13301975098", "contact_gallery_title": "品牌图库", "contact_gallery_text": "厂房环境 · 生产车间 · VFFS设备 · 食品包装\n自动称重 · 项目案例 · 视频中心", "footer": "© 上海众和包装机械有限公司", "categories": [["company", "公司形象", "Company", "▦"], ["factory", "厂房环境", "Factory", "▤"], ["workshop", "生产车间", "Workshop", "⚙"], ["vffs", "VFFS设备", "VFFS Machine", "▥"], ["food", "食品包装", "Food Packaging", "◈"], ["weighing", "自动称重", "Weighing System", "⌗"], ["cases", "项目案例", "Case Studies", "▣"], ["videos", "视频中心", "Video", "▶"]]};
+
+// V26: lock the banner geometry after the first page load.
+// The first viewport width is used only once to calculate 18.7% / 62.6% / 18.7%.
+// Subsequent window resize events intentionally do nothing to these values.
+(function lockHeroGeometryOnce(){
+  const viewportWidth=Math.max(320,window.innerWidth||1600);
+  const left=Math.round(viewportWidth*0.187);
+  const center=Math.round(viewportWidth*0.626);
+  const right=viewportWidth-left-center;
+  const root=document.documentElement;
+  root.style.setProperty('--hero-canvas-width',viewportWidth+'px');
+  root.style.setProperty('--hero-left-width',left+'px');
+  root.style.setProperty('--hero-center-width',center+'px');
+  root.style.setProperty('--hero-right-width',right+'px');
+})();
+const DEFAULTS={"nav_home": "首页", "nav_about": "公司概况", "nav_gallery": "品牌图库", "nav_solution": "解决方案", "nav_contact": "联系我们", "hero_eyebrow": "SHANGHAI ZHONGHE PACKAGING MACHINERY", "hero_title": "品牌形象图库", "hero_subtitle": "用影像，记录我们的专业与实力", "hero_en": "BRAND GALLERY", "hero_desc": "Photos & Videos　|　Our Factory · Our Machines · Our Team", "about_title": "公司概况", "about_en": "ABOUT US", "about_text": "上海众和包装机械有限公司是一家专注于 VFFS 立式包装机及食品包装解决方案的高新技术企业。公司拥有专业的研发团队和先进的制造工艺，致力于为客户提供高效、稳定、智能的包装设备。", "about_features": [["高品质设备","精工制造 品质可靠","◇"],["定制化方案","满足多样化需求","◇"],["全球服务","快速响应 专业支持","◇"],["合作共赢","与客户共同成长","◇"]], "gallery_title": "精选图库", "gallery_en": "FEATURED GALLERY", "video_title": "VFFS 包装系统方案演示视频", "video_desc": "从薄膜放卷、制袋、计量到成品输出，展示高效、稳定、智能的包装解决方案。", "video_button": "浏览视频内容　▶", "contact_company_title": "上海众和包装机械有限公司", "contact_company_text": "专注包装机械及自动化包装系统，为食品及相关行业提供设备与整体解决方案。", "contact_title": "联系我们", "contact_address": "地址：上海市松江区玉佳支路88号", "contact_phone": "电话：021-57817120-106", "contact_mobile": "手机：13301975098", "contact_gallery_title": "品牌图库", "contact_gallery_text": "厂房环境 · 生产车间 · VFFS设备 · 食品包装\n自动称重 · 项目案例 · 视频中心", "footer": "© 上海众和包装机械有限公司", "categories": [["company", "公司形象", "Company", "▦"], ["factory", "厂房环境", "Factory", "▤"], ["workshop", "生产车间", "Workshop", "⚙"], ["vffs", "VFFS设备", "VFFS Machine", "▥"], ["food", "食品包装", "Food Packaging", "◈"], ["weighing", "自动称重", "Weighing System", "⌗"], ["cases", "项目案例", "Case Studies", "▣"], ["videos", "视频中心", "Video", "▶"]]};
 let settings=structuredClone(DEFAULTS);
 let defs=DEFAULTS.categories.slice();
 let all=[], currentSlot='company', album=[], currentIndex=0;
@@ -129,7 +138,7 @@ function applySettings(){
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function makeTabs(){
  $('tabs').innerHTML=defs.map((d,i)=>`<button class="tab ${i===0?'active':''}" data-slot="${d[0]}"><span class="icon">${d[3]}</span><b>${esc(d[1])}</b><span>${esc(d[2])}</span></button>`).join('');
- document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>selectSlot(t.dataset.slot,true));
+ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>selectSlot(t.dataset.slot, window.innerWidth > 767));
 }
 function placeholder(slot){return `<div class="placeholder">${slot==='vffs'||slot==='videos'?'VFFS':'ZH'}</div>`}
 function coverCard(slot){
@@ -154,15 +163,21 @@ function renderFeatured(){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===currentSlot));
   renderAlbum();
 }
-function selectSlot(slot,scroll){currentSlot=slot;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===slot));renderAlbum();if(scroll)$('gallery').scrollIntoView({behavior:'smooth',block:'start'})}
+function selectSlot(slot,scroll){currentSlot=slot;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.slot===slot));renderAlbum();if(scroll && window.innerWidth > 767)$('gallery').scrollIntoView({behavior:'smooth',block:'start'})}
 async function load(){
  const {data,error}=await client.from('gallery_items').select('*').eq('published',true).order('sort_order',{ascending:true}).order('created_at',{ascending:true});
  if(error){$('syncStatus').textContent='图库连接失败';$('galleryGrid').innerHTML='<div class="empty">暂时无法读取图库，请检查 Supabase Data API 与 RLS 配置。</div>';return}
- all=(data||[]).filter(x=>!['hero','site_settings'].includes(x.slot_key));
+ all=(data||[]).filter(x=>!['hero','hero_left','hero_right','hero_center','site_settings'].includes(x.slot_key));
  const row=(data||[]).find(x=>x.slot_key==='site_settings');
  if(row?.description){try{settings={...DEFAULTS,...JSON.parse(row.description)}}catch(e){}}
- const hero=(data||[]).find(x=>x.slot_key==='hero'&&x.image_url);
- if(hero)$('hero').querySelector('.hero-photo').style.backgroundImage=`url("${hero.image_url}")`;
+ const heroCenter=(data||[]).find(x=>(x.slot_key==='hero_center'||x.slot_key==='hero')&&x.image_url);
+ const heroLeft=(data||[]).find(x=>x.slot_key==='hero_left'&&x.image_url);
+ const heroRight=(data||[]).find(x=>x.slot_key==='hero_right'&&x.image_url);
+ const setBg=(sel,item,fallback)=>{const e=$(sel);if(e)e.style.backgroundImage=`url("${item?.image_url||fallback}")`};
+ // Local placeholders keep the three-part banner visually complete until the side images are replaced from Admin.
+ setBg('hero-bg-left',heroLeft,'hero-left-placeholder.jpg');
+ if(heroCenter) setBg('hero-bg-center',heroCenter,''); else { const e=$('hero-bg-center'); if(e)e.style.backgroundImage=''; }
+ setBg('hero-bg-right',heroRight,'hero-right-placeholder.jpg');
  applySettings();
  $('syncStatus').textContent=`已连接 · ${all.length} 个内容`;
  renderFeatured();
@@ -173,9 +188,11 @@ function setNavActive(id){
   document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('active',a.id===id));
 }
 document.querySelectorAll('.menu a').forEach(a=>{
-  a.addEventListener('click',()=>{
+  a.addEventListener('click',(e)=>{
     const id=a.id;
     setNavActive(id);
+    // Mobile: keep the fixed desktop canvas in place; do not trigger anchor scrolling.
+    if(window.innerWidth <= 767 && a.getAttribute('href') && a.getAttribute('href').startsWith('#')) e.preventDefault();
   });
 });
 const navSections=[
@@ -200,7 +217,7 @@ function openLightbox(i){currentIndex=i;showLightboxItem()}
 function showLightboxItem(){const item=album[currentIndex];if(!item)return;$('lbMedia').innerHTML=item.image_url?`<img src="${esc(item.image_url)}" alt="">`:item.video_url?`<video src="${esc(item.video_url)}" controls autoplay playsinline></video>`:'';$('lbCaption').textContent=(item.title||'')+(item.description?' · '+item.description:'');$('lightbox').classList.add('show');$('lightbox').setAttribute('aria-hidden','false');document.body.classList.add('no-scroll')}
 function closeLightbox(){$('lightbox').classList.remove('show');$('lightbox').setAttribute('aria-hidden','true');$('lbMedia').innerHTML='';document.body.classList.remove('no-scroll')}
 function step(n){if(!album.length)return;currentIndex=(currentIndex+n+album.length)%album.length;showLightboxItem()}
-$('lbClose').onclick=closeLightbox;$('lbPrev').onclick=()=>step(-1);$('lbNext').onclick=()=>step(1);$('lightbox').onclick=e=>{if(e.target===$('lightbox'))closeLightbox()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});$('videoCenterBtn').onclick=()=>selectSlot('videos',true);
+$('lbClose').onclick=closeLightbox;$('lbPrev').onclick=()=>step(-1);$('lbNext').onclick=()=>step(1);$('lightbox').onclick=e=>{if(e.target===$('lightbox'))closeLightbox()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});$('videoCenterBtn').onclick=()=>selectSlot('videos',window.innerWidth > 767);
 load();
 </script>
 </body></html>
