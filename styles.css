@@ -471,3 +471,123 @@ html,body{min-width:0!important;width:100%!important;overflow-x:hidden!important
   .gallery{grid-template-columns:1fr!important;gap:14px!important;}
   .photo-card .media,.media{height:220px!important;}
 }
+
+
+/* V39: mobile visual refinement — desktop unchanged. */
+@media(max-width:767px){
+  /* Banner typography: keep the mobile Banner image, but scale the overlay copy for phone screens. */
+  .hero-content{
+    padding:42px 22px 28px!important;
+    display:block!important;
+  }
+  .eyebrow{
+    font-size:9px!important;
+    line-height:1.4!important;
+    letter-spacing:.13em!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+  }
+  .hero h1{
+    font-size:34px!important;
+    line-height:1.08!important;
+    margin:12px 0 9px!important;
+    white-space:normal!important;
+    max-width:92%!important;
+  }
+  .subtitle{
+    font-size:15px!important;
+    line-height:1.5!important;
+    margin:0!important;
+  }
+  .hero-line{
+    width:52px!important;
+    height:2px!important;
+    margin:14px 0!important;
+    box-shadow:none!important;
+  }
+  .hero-en{
+    font-size:9px!important;
+    letter-spacing:.11em!important;
+  }
+  .hero-desc{
+    font-size:8px!important;
+    line-height:1.5!important;
+    margin-top:5px!important;
+  }
+
+  /* Only the gallery category tabs retain the selected state on mobile. */
+  .menu a,
+  .menu a:hover,
+  .menu a.active{
+    color:#d4e2f0!important;
+  }
+  .menu a.active:after{display:none!important;}
+
+  /* Four advantages become one compact row of icon + text blocks. */
+  .about-inner{gap:20px!important;}
+  .about-features{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    width:100%!important;
+  }
+  .feature{
+    padding:10px 4px!important;
+    min-height:82px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .feature-icon{
+    font-size:18px!important;
+    line-height:1!important;
+    margin-bottom:6px!important;
+  }
+  .feature b{
+    font-size:11px!important;
+    line-height:1.35!important;
+    margin-bottom:2px!important;
+    white-space:nowrap!important;
+  }
+  .feature span{
+    font-size:8px!important;
+    line-height:1.35!important;
+    white-space:nowrap!important;
+    transform:scale(.92);
+    transform-origin:center;
+  }
+
+  /* Contact: give the company column less room and let the phone/address column expand. */
+  .contact{
+    padding:34px 0!important;
+  }
+  .contact-grid{
+    width:100%!important;
+    max-width:none!important;
+    padding:0 18px!important;
+    grid-template-columns:.72fr 1.48fr 1fr!important;
+    gap:14px!important;
+    align-items:start!important;
+  }
+  .contact h3{
+    font-size:16px!important;
+    line-height:1.45!important;
+    margin:0 0 9px!important;
+  }
+  .contact p{
+    font-size:10px!important;
+    line-height:1.75!important;
+    margin:4px 0!important;
+  }
+  .contact-details p{
+    white-space:normal!important;
+    word-break:keep-all!important;
+    overflow-wrap:normal!important;
+  }
+  .contact-grid>div:nth-child(2){
+    min-width:0!important;
+  }
+  .contact-grid>div:nth-child(3) p{
+    white-space:pre-line!important;
+    line-height:1.85!important;
+  }
+}

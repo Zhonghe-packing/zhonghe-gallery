@@ -116,6 +116,10 @@ function applySettings(){
   text('aboutEn','about_en'); text('aboutTitle','about_title'); text('aboutText','about_text'); renderAboutFeatures();
   text('galleryTitle','gallery_title'); text('galleryEn','gallery_en'); text('videoTitle','video_title'); text('videoDesc','video_desc'); text('videoButton','video_button');
   text('contactCompanyTitle','contact_company_title'); text('contactCompanyText','contact_company_text'); text('contactTitle','contact_title'); text('contactAddress','contact_address'); text('contactPhone','contact_phone'); text('contactMobile','contact_mobile'); text('contactGalleryTitle','contact_gallery_title'); text('contactGalleryText','contact_gallery_text'); text('footerText','footer');
+  // Mobile contact gallery: turn separator-style source text into one item per line.
+  const cgt=$('contactGalleryText');
+  if(cgt){ const raw=cgt.textContent||''; cgt.dataset.mobileText=raw.replace(/\s*·\s*/g,'\n').replace(/\n+/g,'\n').trim(); }
+  syncMobileContactGallery();
   $('navHome').href='index.html'; $('navAbout').href='#about'; $('navGallery').href='#gallery'; $('navSolution').href='#video'; $('navContact').href='#contact';
   defs=(settings.categories&&settings.categories.length?settings.categories:DEFAULTS.categories).map((d,i)=>[d[0],d[1],d[2],d[3]]);
   makeTabs();
@@ -198,6 +202,8 @@ window.addEventListener('resize',()=>{
  // Deliberately do nothing after the first desktop measurement.
  // This prevents any resize-driven width recalculation.
 });
+function syncMobileContactGallery(){ const el=$('contactGalleryText'); if(!el || !el.dataset.mobileText)return; el.textContent=window.innerWidth<=767 ? el.dataset.mobileText : el.dataset.mobileText.replace(/\n/g,' · '); }
+syncMobileContactGallery();
 
 function setNavActive(id){
   document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('active',a.id===id));
