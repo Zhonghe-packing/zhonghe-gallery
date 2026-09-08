@@ -333,3 +333,141 @@ html,body{min-width:0!important;width:100%!important;overflow-x:hidden!important
     max-width:none!important;
   }
 }
+
+/* V38: mobile responsive repair — desktop remains unchanged.
+   Fix the desktop two-column About grid from collapsing into a ~0px text column,
+   and make the mobile header/navigation fit the actual phone viewport. */
+@media(max-width:767px){
+  /* Header: compact brand row + horizontally scrollable navigation row. */
+  .top{
+    height:auto!important;
+    min-height:76px!important;
+  }
+  .nav{
+    height:auto!important;
+    min-height:76px!important;
+    padding:10px 14px 8px!important;
+    gap:6px 10px!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+  }
+  .logo{
+    min-width:0!important;
+    flex:1 1 auto!important;
+    width:auto!important;
+    gap:8px!important;
+  }
+  .logo img{
+    width:42px!important;
+    height:42px!important;
+    flex:0 0 42px!important;
+  }
+  .logo strong{
+    width:auto!important;
+    max-width:none!important;
+    font-size:15px!important;
+    line-height:1.2!important;
+  }
+  .logo small{
+    width:auto!important;
+    max-width:100%!important;
+    font-size:7px!important;
+    letter-spacing:.03em!important;
+    transform:none!important;
+    margin-top:3px!important;
+    overflow:hidden!important;
+  }
+  .lang{display:none!important;}
+  .menu{
+    order:3!important;
+    flex:0 0 100%!important;
+    width:100%!important;
+    min-width:0!important;
+    justify-content:flex-start!important;
+    gap:24px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    padding:3px 0 2px!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+  }
+  .menu::-webkit-scrollbar{display:none!important;}
+  .menu a{
+    flex:0 0 auto!important;
+    font-size:13px!important;
+    padding:7px 0!important;
+  }
+
+  /* About: force a single readable column on phones. */
+  .about-text-section{
+    padding:34px 18px 32px!important;
+  }
+  .about-inner{
+    width:100%!important;
+    max-width:none!important;
+    padding:0!important;
+    margin:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:28px!important;
+    align-items:start!important;
+  }
+  .about-copy{
+    width:100%!important;
+    min-width:0!important;
+  }
+  .section-heading{
+    width:100%!important;
+    display:flex!important;
+    align-items:baseline!important;
+    gap:10px!important;
+    margin-bottom:14px!important;
+  }
+  .section-heading h2{
+    font-size:28px!important;
+    line-height:1.25!important;
+    white-space:nowrap!important;
+  }
+  .section-heading span{
+    font-size:10px!important;
+    letter-spacing:.14em!important;
+  }
+  .about-inner p{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    font-size:14px!important;
+    line-height:1.9!important;
+  }
+  .about-features{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    border-left:1px solid #e1e9f2!important;
+    border-top:1px solid #e1e9f2!important;
+  }
+  .feature{
+    min-width:0!important;
+    padding:16px 10px!important;
+    border-right:1px solid #e1e9f2!important;
+    border-bottom:1px solid #e1e9f2!important;
+  }
+  .feature-icon{font-size:27px!important;margin-bottom:8px!important;}
+  .feature b{font-size:14px!important;margin-bottom:5px!important;}
+  .feature span{font-size:10px!important;line-height:1.5!important;}
+
+  /* Gallery/content sections should also use the phone width rather than desktop minima. */
+  .section{
+    width:100%!important;
+    max-width:none!important;
+    padding:38px 18px!important;
+  }
+  .section-title{
+    align-items:flex-start!important;
+    gap:8px!important;
+    flex-direction:column!important;
+  }
+  .section-title h2{font-size:25px!important;}
+  .gallery{grid-template-columns:1fr!important;gap:14px!important;}
+  .photo-card .media,.media{height:220px!important;}
+}
