@@ -231,3 +231,105 @@ html,body{min-width:1600px;}
 .hero-preview-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:min(1100px,100%)}
 .hero-part-note{margin:8px 12px 0!important;line-height:1.6;}
 @media(max-width:760px){.hero-preview-two{grid-template-columns:1fr}.hero-part-preview{height:190px}}
+
+/* V29: desktop Banner artwork is locked once in JS to the first desktop viewport width.
+   The resize event never changes that width. Narrower windows simply crop it. */
+.hero{width:100vw;max-width:none;height:430px;margin-left:50%;transform:translateX(-50%);overflow:hidden;position:relative;background:#061b35;}
+.hero-bg-desktop{display:block;position:absolute;top:0;left:50%;right:auto;bottom:auto;width:auto;height:430px;max-width:none;object-fit:cover;object-position:center center;margin-left:0;transform:translateX(-50%);z-index:0;}
+.hero-bg-mobile{display:none;}
+@media(max-width:767px){
+  .hero{width:100vw;height:auto;min-height:0;margin-left:0;transform:none;background:#061b35;}
+  .hero-bg-desktop{display:none!important;}
+  .hero-bg-mobile{display:block;position:relative;inset:auto;width:100%;height:auto;max-width:none;aspect-ratio:3 / 4;object-fit:contain;object-position:center top;margin:0;transform:none;background:#061b35;}
+  .hero-content{left:0;top:0;width:100%;height:100%;margin-left:0;padding:58px 22px;transform:none;}
+}
+
+
+/* V30 final: full-width hero/tabs with one-time locked desktop artwork width.
+   The viewport width is used only once by JS; resizing never changes the image width. */
+.hero{
+  width:100vw!important;
+  max-width:none!important;
+  margin-left:50%!important;
+  margin-right:0!important;
+  transform:translateX(-50%)!important;
+  overflow:hidden!important;
+  background:#061b35!important;
+}
+.hero-bg-desktop{
+  position:absolute!important;
+  top:0!important;
+  left:50%!important;
+  width:auto;
+  height:430px!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+/* Full-width light strip/category block directly below the hero. */
+.tabs{
+  width:100vw!important;
+  max-width:none!important;
+  margin-left:50%!important;
+  margin-right:0!important;
+  transform:translateX(-50%)!important;
+  padding:0!important;
+}
+.tabbar{
+  width:100%!important;
+  max-width:none!important;
+  border-left:0!important;
+  border-right:0!important;
+  border-radius:0!important;
+}
+@media(max-width:767px){
+  .hero{width:100vw!important;margin-left:0!important;transform:none!important;height:auto!important;}
+  .hero-bg-desktop{display:none!important;}
+  .hero-bg-mobile{display:block!important;position:relative!important;inset:auto!important;width:100%!important;height:auto!important;max-width:none!important;aspect-ratio:3 / 4!important;object-fit:contain!important;object-position:center top!important;margin:0!important;transform:none!important;}
+  .tabs{width:100vw!important;margin-left:0!important;transform:none!important;padding:0!important;}
+}
+
+/* V31: true viewport-width shell. The previous fixed 1600px site canvas caused
+   white margins after resizing. Keep content max-width constrained, but let all
+   full-bleed bands use the real viewport width. Desktop hero artwork remains
+   one-time pixel-locked by JS; only its container is responsive. */
+html,body{min-width:0!important;width:100%!important;overflow-x:hidden!important;}
+.site-canvas{width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;transform:none!important;}
+.top{width:100%!important;}
+.nav{width:100%!important;max-width:1600px;margin:0 auto;}
+.hero{width:100vw!important;max-width:none!important;margin-left:50%!important;margin-right:0!important;transform:translateX(-50%)!important;}
+.hero-content{width:min(1600px,100%)!important;left:50%!important;margin-left:0!important;transform:translateX(-50%)!important;}
+.tabs{width:100vw!important;max-width:none!important;margin-left:50%!important;margin-right:0!important;transform:translateX(-50%)!important;padding:0!important;}
+.tabbar{width:100%!important;max-width:none!important;margin:0!important;border-left:0!important;border-right:0!important;border-radius:0!important;}
+.contact,footer{width:100vw!important;max-width:none!important;margin-left:50%!important;margin-right:0!important;transform:translateX(-50%)!important;}
+.contact-grid,.foot{width:min(1600px,100%)!important;max-width:1600px!important;margin:0 auto!important;}
+@media(max-width:767px){
+  html,body{min-width:0!important;width:100%!important;overflow-x:hidden!important;}
+  .site-canvas{width:100%!important;margin:0!important;}
+  .nav{max-width:none!important;padding-left:14px!important;padding-right:14px!important;}
+  .hero{width:100vw!important;margin-left:0!important;transform:none!important;height:auto!important;min-height:0!important;}
+  .hero-bg-mobile{width:100%!important;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;}
+  .hero-content{left:0!important;width:100%!important;height:100%!important;margin:0!important;transform:none!important;}
+  .tabs,.contact,footer{width:100vw!important;margin-left:0!important;transform:none!important;}
+  .contact-grid,.foot{width:100%!important;max-width:none!important;}
+}
+
+/* V37: Gallery category navigation only — fixed 1600px and centered on desktop.
+   All other V31 layout rules remain unchanged. */
+@media(min-width:768px){
+  .tabs{
+    width:1600px!important;
+    max-width:1600px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    transform:none!important;
+    padding:0!important;
+  }
+  .tabbar{
+    width:100%!important;
+    max-width:none!important;
+  }
+}

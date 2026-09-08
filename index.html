@@ -78,14 +78,13 @@
 
 <script>
 (function(){
-  // V9: keep the public website at a fixed desktop canvas.
-  // The page no longer scales with browser width; narrow windows simply crop
-  // the fixed canvas instead of stretching or shrinking the design.
+  // V31: the page shell is full viewport width. Content blocks keep their own max-width.
+  // The desktop Banner artwork itself is locked once in pixels later in this file.
   const canvas=document.getElementById('siteCanvas');
   if(canvas){
-    canvas.style.width='1600px';
+    canvas.style.width='100%';
     canvas.style.maxWidth='none';
-    canvas.style.margin='0 auto';
+    canvas.style.margin='0';
     canvas.style.transform='none';
     canvas.style.transformOrigin='top left';
   }
@@ -161,11 +160,44 @@ async function load(){
  const setImage=(id,item)=>{const e=$(id);if(!e)return;e.src=item?.image_url||'';e.style.display=item?.image_url?'block':'none'};
  setImage('heroDesktopImage',heroDesktop);
  setImage('heroMobileImage',heroMobile);
+ lockDesktopHeroOnce();
  applySettings();
  $('syncStatus').textContent=`已连接 · ${all.length} 个内容`;
  renderFeatured();
 }
 window.selectSlot=selectSlot;
+
+// V30: desktop Banner width is measured ONCE at the first desktop render and
+// immediately converted to a fixed CSS-pixel value. Resize never recalculates it.
+// The outer hero remains full-width; only the artwork is locked and cropped.
+let desktopHeroLocked=false;
+function lockDesktopHeroOnce(){
+ const img=$('heroDesktopImage');
+ if(!img || desktopHeroLocked || window.innerWidth<=767) return;
+ const lockedWidth=Math.max(320,Math.round(window.innerWidth));
+ img.dataset.lockedWidth=String(lockedWidth);
+ img.style.setProperty('width',lockedWidth+'px','important');
+ img.style.setProperty('height','430px','important');
+ img.style.setProperty('left','50%','important');
+ img.style.setProperty('top','0','important');
+ img.style.setProperty('right','auto','important');
+ img.style.setProperty('bottom','auto','important');
+ img.style.setProperty('margin-left',(-lockedWidth/2)+'px','important');
+ img.style.setProperty('margin-right','0','important');
+ img.style.setProperty('transform','none','important');
+ img.style.setProperty('object-fit','cover','important');
+ img.style.setProperty('object-position','center center','important');
+ const hero=$('hero');
+ if(hero){
+   hero.dataset.lockedWidth=String(lockedWidth);
+   hero.style.setProperty('--desktop-hero-locked-width',lockedWidth+'px');
+ }
+ desktopHeroLocked=true;
+}
+window.addEventListener('resize',()=>{
+ // Deliberately do nothing after the first desktop measurement.
+ // This prevents any resize-driven width recalculation.
+});
 
 function setNavActive(id){
   document.querySelectorAll('.menu a').forEach(a=>a.classList.toggle('active',a.id===id));
